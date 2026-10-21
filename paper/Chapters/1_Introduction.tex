@@ -59,16 +59,16 @@ resource-constrained settings the trilemma is at its most acute, since none of
 the three dimensions can be relaxed without unacceptable consequence.
  
 A further pressure compounds the problem. The asymmetric cryptography that
-underpins current authentication and key exchange RSA and elliptic-curve
-schemes is vulnerable to a sufficiently capable quantum computer executing
+underpins current authentication and key exchange---RSA and elliptic-curve
+schemes---is vulnerable to a sufficiently capable quantum computer executing
 Shor's algorithm. The risk is not deferred to the arrival of such a machine:
 under the ``harvest-now, decrypt-later'' model, an adversary can capture
 encrypted traffic today and decrypt it retroactively once the capability
 matures, placing data with long confidentiality horizons at present risk. This
 concern is now codified rather than speculative. In August 2024, the U.S.
 National Institute of Standards and Technology finalised its first
-post-quantum cryptographic standards FIPS~203 (ML-KEM, derived from
-CRYSTALS-Kyber), FIPS~204 (ML-DSA), and FIPS~205 (SLH-DSA) concluding a
+post-quantum cryptographic standards---FIPS~203 (ML-KEM, derived from
+CRYSTALS-Kyber), FIPS~204 (ML-DSA), and FIPS~205 (SLH-DSA)---concluding a
 standardisation process initiated in 2016~\cite{fips203, fips204, fips205}. For
 constrained IIoT the challenge is sharper still, as post-quantum primitives
 carry larger keys and ciphertexts than the schemes they replace and must be made
@@ -90,49 +90,16 @@ applied uniformly but is partitioned across a tiered architecture:
 high-frequency behavioural validation is routed through a fast, permissioned
 layer close to the devices, while low-frequency, high-value events such as
 identity anchoring, audit, and revocation are committed to a separate public
-layer. Partitioning trust in this way routing sensitive, high-frequency
+layer, as illustrated in Fig.~\ref{trilemma}. Partitioning trust in this way---routing sensitive, high-frequency
 interactions through permissioned consensus while anchoring integrity proofs and
-audit trails on public chains has been argued to be a structural necessity
+audit trails on public chains---has been argued to be a structural necessity
 rather than a mere performance optimisation for demanding data-sharing
 environments~\cite{amadi2026security}. This principle of trust-partitioning across a hybrid
 ledger, and its realisation within real device budgets and across distinct
 ledger substrates, forms the central contribution of this thesis.
 
 
- 
-
-
-\section{Research Questions and Major Contributions}
-\label{sec:rq}
-
-\subsection{Research Questions}
-\label{subsec:rq}
-The foregoing analysis exposes a single overarching problem. How can trustworthy
-security be delivered for constrained, mission-critical IIoT when the devices
-that carry the security burden cannot afford uniform, heavyweight protection,
-and when the underlying cryptography faces an emerging quantum threat? From this
-problem, five questions follow.
- 
-First, can trust be partitioned across a hybrid ledger, so that high-frequency
-behavioural validation is handled on a fast permissioned layer while
-low-frequency, high-value events such as identity anchoring, audit, and
-revocation are committed to a separate anchoring layer, and does this
-partitioning deliver trustworthy security within real device resource budgets?
-Second, can lightweight artificial-intelligence behavioural trust scoring operate
-inside the compute, memory, and energy budgets of real constrained IIoT devices
-without sacrificing detection performance? Third, can post-quantum-resilient
-identity and credential delivery be achieved on such hardware without prohibitive
-latency or bandwidth cost? Fourth, does the trust-partitioning principle hold
-across distinct ledger substrates, rather than being an artefact of a single
-implementation? Fifth, under adversarial conditions, can behavioural trust
-scoring with decay-based revocation reliably isolate a misbehaving node while the
-hybrid-ledger architecture sustains dependable detection performance? Answering
-these questions requires an architecture that reconciles scalability with speed
-and security while carrying out validation and anchoring within the resource
-limits of industrial edge hardware.
- 
-
-\subsection{Research Motivation}
+\section{Motivation for Research}
 \label{motivation}
 
 This study is motivated by the gap between the security that mission-critical
@@ -156,58 +123,89 @@ sustain. The aim is a security design that is lightweight, verifiable, and
 deployable on real industrial devices, and whose organising principle
 generalises beyond any single implementation.
 
+\section{Research Breakdown and Major Contributions}
+\label{sec:rq}
 
+The foregoing analysis exposes a single overarching problem. How can trustworthy
+security be delivered for constrained, mission-critical IIoT when the devices
+that carry the security burden cannot afford uniform, heavyweight protection,
+and when the underlying cryptography faces an emerging quantum threat? From this
+problem, the following research questions follow:
 
-\subsection{Research Goal and Specific Contributions}
-\label{subsec:contributions}
- 
-The goal of this thesis is to establish that trustworthy security for
-constrained, mission-critical IIoT is achievable by partitioning trust across a
-hybrid-ledger architecture, in which high-frequency behavioural validation is
-handled on a fast permissioned layer and low-frequency, high-value events are
-anchored on a public layer, and to demonstrate this within real device resource
-budgets and across more than one ledger substrate. Toward this goal, the thesis
-makes the following specific contributions.
- 
-\begin{itemize}
+\begin{enumerate}
+  \item \textbf{Trust partitioning:} Can trust be partitioned across a hybrid
+        ledger, so that high-frequency behavioural validation is handled on a
+        fast permissioned layer while low-frequency, high-value events such as
+        identity anchoring, audit, and revocation are committed to a separate
+        anchoring layer, and does this partitioning deliver trustworthy security
+        within real device resource budgets?
+
+  \item \textbf{Lightweight behavioural trust:} Can lightweight
+        artificial-intelligence behavioural trust scoring operate inside the
+        compute, memory, and energy budgets of real constrained IIoT devices
+        without sacrificing detection performance?
+
+  \item \textbf{Quantum-resilient identity:} Can post-quantum-resilient identity
+        and credential delivery be achieved on such hardware without prohibitive
+        latency or bandwidth cost?
+
+  \item \textbf{Substrate independence:} Does the trust-partitioning principle
+        hold across distinct ledger substrates, rather than being an artefact of
+        a single implementation?
+
+  \item \textbf{Adversarial robustness:} Under adversarial conditions, can
+        behavioural trust scoring with decay-based revocation reliably isolate a
+        misbehaving node while the hybrid-ledger architecture sustains
+        dependable detection performance?
+\end{enumerate}
+
+Answering these questions requires an architecture that reconciles scalability
+with speed and security while carrying out validation and anchoring within the
+resource limits of industrial edge hardware. The goal of this thesis is
+therefore to establish that trustworthy security for constrained,
+mission-critical IIoT is achievable by partitioning trust across a hybrid-ledger
+architecture, in which high-frequency behavioural validation is handled on a
+fast permissioned layer and low-frequency, high-value events are anchored on a
+public layer, and to demonstrate this within real device resource budgets and
+across more than one ledger substrate. Toward this goal, this research makes the
+following contributions:
+
+\begin{enumerate}
   \item It introduces STRATA, a unified trust-partitioning architecture for
         constrained, mission-critical IIoT, in which high-frequency behavioural
         validation on a fast permissioned layer is separated from low-frequency
         identity anchoring and audit committed to a public layer, and it
         consolidates three published systems as instances of this single
         architecture rather than as independent designs.
- 
+
   \item It presents a lightweight federated behavioural-trust module built on a
         trimmed one-dimensional CNN-LSTM model coupled with a resource-optimised
         permissioned ledger, and evaluates it end to end across both the
         artificial-intelligence and blockchain layers, reporting detection
         performance together with blockchain-side costs.
- 
+
   \item It presents a quantum-resilient identity and credential module based on
         entropy-seeded identity generation and compressed post-quantum key
         delivery, and demonstrates its feasibility on constrained hardware,
         distinguishing clearly between the components that are implemented and
         measured and those reserved as design.
- 
+
   \item It demonstrates that the trust-partitioning principle is
         substrate-independent by realising it on two distinct ledger
         substrates, and it provides a consolidated evaluation, spanning
         detection performance, resource overhead, blockchain cost, and
         quantum-resilience, that assesses the architecture against the resource
         constraints of industrial edge devices.
-\end{itemize}
- 
- 
+\end{enumerate}
+
 To the best of the author's knowledge, no prior work establishes trust
 partitioning across a hybrid ledger as a unifying principle for constrained,
 mission-critical IIoT, demonstrated within real device budgets and shown to hold
 across distinct ledger substrates. This constitutes the novelty of the thesis.
- 
-\subsection{Thesis Organisation}
+
 \label{sec:organisation}
- 
-The remainder of this thesis is organised as follows. Chapter~\ref{Chapter_1}
-introduces the problem, the motivation, the research questions, and the
+The organisation of this thesis is as follows. Chapter~\ref{Chapter_1}
+presents the introduction, the motivation, the research questions, and the
 contributions. Chapter~2 provides the background, covering consensus and hybrid
 ledgers, post-quantum cryptography, and lightweight learning for anomaly
 detection. Chapter~3 reviews related work and, through a systematic analysis,
@@ -215,6 +213,5 @@ identifies the defence gap that the thesis addresses. Chapter~4 presents the
 STRATA architecture and its constituent modules as instances of a single
 trust-partitioning design. Chapter~5 reports the consolidated evaluation across
 detection performance, resource overhead, blockchain cost, and quantum
-resilience. Chapter~6 concludes with a summary of contributions, the disclosed
-limitations, and directions for future work.
- 
+resilience. The thesis is concluded in Chapter~6 with a summary of
+contributions, the disclosed limitations, and directions for future work.
