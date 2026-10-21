@@ -36,8 +36,16 @@ for more than half of observed victims; roughly one quarter of these incidents
 forced a full shutdown of the affected OT site~\cite{dragos2025}. The financial
 consequences are comparable in magnitude, with the global average cost of a data
 breach reaching USD~4.44~million and rising to USD~10.22~million in the United
-States~\cite{ibm2025}. These figures establish the stakes; the difficulty,
-however, lies in which devices must bear the security burden.
+States~\cite{ibm2025}. Fig.~\ref{fig:landscape} summarises these indicators.
+These figures establish the stakes; the difficulty, however, lies in which
+devices must bear the security burden.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Fig1_2_landscape.png}
+    \caption{Indicators of the IIoT security landscape: (a) growth of connected IoT devices from 2024 to 2030~\cite{iotanalytics2025}; (b) ransomware activity against industrial organisations~\cite{dragos2025}; and (c) the average cost of a data breach globally and in the United States~\cite{ibm2025}.}
+    \label{fig:landscape}
+\end{figure}
  
 The nodes at the edge of an IIoT deployment are severely resource-constrained,
 operating within tight budgets of computation, memory, and energy. These
@@ -49,8 +57,10 @@ can be delivered within the resource envelope of constrained devices without
 sacrificing the real-time responsiveness that mission-critical operations
 demand.
  
-This tension is a concrete instance of the well-documented blockchain trilemma:
-the difficulty of simultaneously achieving security, scalability, and speed
+Distributed ledgers are a natural foundation for tamper-evident trust among such
+devices, yet they bring a constraint of their own. This tension is a concrete
+instance of the well-documented blockchain trilemma: the difficulty of
+simultaneously achieving security, scalability, and speed
 within a single distributed-ledger system, where optimising any two dimensions
 tends to come at the expense of the third~\cite{aiv_own}. Recent theoretical
 work argues that these trade-offs are not merely engineering compromises but
@@ -82,6 +92,27 @@ to fit hardware already strained by classical cryptography.
     \caption{The security, scalability, and speed trilemma in constrained mission-critical IIoT, and the trust-partitioning response adopted in this thesis, in which fast permissioned validation is separated from public anchoring.}
     \label{trilemma}
 \end{figure}
+
+Several approaches have been proposed to meet these pressures, but each resolves
+one at the expense of another. Learning-based detectors built on convolutional,
+recurrent, and hybrid convolutional-recurrent models achieve strong accuracy on
+industrial traffic~\cite{chen2025cnnlstm, anwer2025federated}, and federated
+variants keep raw data on the premises that generate
+it~\cite{lee2025lightweight, mao2025fedinnid}. However, the trust verdict these
+detectors produce is stored wherever the model runs, so it remains as mutable as
+its host. Permissioned ledgers coupled to intrusion detection make such verdicts
+tamper-evident~\cite{song2025hybrid, peng2025bctdics}, yet committing at
+industrial event rates strains consensus throughput and on-chain
+storage~\cite{xiong2025sharding, ding2025dcstorage}. Hybrid and tiered ledgers
+reconcile operational speed with external verifiability by anchoring a compact
+digest of a fast permissioned layer on a public
+chain~\cite{ullah2025mbid, banitalebi2025edblsd}. In doing so, however, they make
+the cross-chain link the weakest point of the combined
+system~\cite{zhou2025bridgeguard}, and the quantum-resistant primitives needed
+to keep the anchored record durable carry keys and signatures that collide with
+the budgets of constrained devices~\cite{hanna2025comprehensive, cruz2025measuring}.
+What is required is therefore not a stronger single layer of protection, but a
+design that places each security function where its cost can be sustained.
  
 Taken together, these forces define the gap this thesis addresses. Trustworthy
 IIoT security must be affordable within real device resource budgets, responsive
@@ -208,6 +239,52 @@ partitioning across a hybrid ledger as a unifying principle for constrained,
 mission-critical IIoT, demonstrated within real device budgets and shown to hold
 across distinct ledger substrates. This constitutes the novelty of the thesis.
 
+Table~\ref{tab:rq-map} maps each research question to the contribution that
+answers it, the sections in which it is designed and evaluated, and the
+published work on which it builds.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.35}
+\caption{Mapping of the research questions to the contributions, the thesis sections that design and evaluate them, and the underlying publications.}
+\label{tab:rq-map}
+\begin{tabularx}{\textwidth}{@{}
+    >{\raggedright\arraybackslash}p{0.9cm}
+    >{\raggedright\arraybackslash}X
+    >{\centering\arraybackslash}p{1.3cm}
+    >{\raggedright\arraybackslash}p{2.1cm}
+    >{\raggedright\arraybackslash}p{2.4cm}
+    >{\raggedright\arraybackslash}p{2.2cm}@{}}
+\toprule
+\textbf{RQ} & \textbf{Focus} & \textbf{Contri\-bution} & \textbf{Design (Ch.~4)} & \textbf{Evaluation (Ch.~5)} & \textbf{Publication} \\
+\midrule
+RQ1 & Partitioning trust across a hybrid ledger within device budgets
+    & 1 & \S\ref{sec:strata-principle}, \S\ref{sec:strata-anchor}
+    & \S\ref{sec:eval-ledger}, \S\ref{sec:eval-trilemma}
+    & \cite{amadi2026security, amadi2026lightweight} \\
+RQ2 & Lightweight behavioural trust scoring on constrained devices
+    & 2 & \S\ref{sec:strata-trust}
+    & \S\ref{sec:eval-evidence}, \S\ref{sec:eval-learning}, \S\ref{sec:eval-resource}
+    & \cite{amadi2026lightweight} \\
+RQ3 & Quantum-resilient identity and credential delivery
+    & 3 & \S\ref{sec:plane-b}
+    & \S\ref{sec:eval-identity}
+    & \cite{amadi2025quantum, amadi2026symmetric} \\
+RQ4 & Substrate independence of trust partitioning
+    & 4 & \S\ref{sec:strata-substrates}
+    & \S\ref{sec:eval-substrate}
+    & \cite{amadi2026lightweight, amadi2026symmetric} \\
+RQ5 & Isolating a misbehaving node under adversarial conditions
+    & 2, 3 & \S\ref{sec:plane-a}
+    & \S\ref{sec:eval-security}, \S\ref{sec:eval-isolation}
+    & \cite{amadi2026symmetric} \\
+\bottomrule
+\multicolumn{6}{@{}p{\textwidth}@{}}{\scriptsize The trilemma framing of Chapters~1 and~2 draws on~\cite{aiv_own}, and the systematic review of Chapter~3 extends~\cite{amadi2026security}.}
+\end{tabularx}
+\end{table}
+
 \label{sec:organisation}
 The organisation of this thesis is as follows. Chapter~\ref{Chapter_1}
 presents the introduction, the motivation, the research questions, and the
@@ -220,3 +297,13 @@ trust-partitioning design. Chapter~5 reports the consolidated evaluation across
 detection performance, resource overhead, blockchain cost, and quantum
 resilience. The thesis is concluded in Chapter~6 with a summary of
 contributions, the disclosed limitations, and directions for future work.
+Fig.~\ref{fig:roadmap} presents this structure as a roadmap, indicating the
+research questions each chapter addresses and the published work on which it
+draws.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Fig1_3_roadmap.png}
+    \caption{Roadmap of the thesis, showing the flow from problem definition to the STRATA architecture, its evaluation, and the conclusions, together with the research questions and publications associated with each chapter.}
+    \label{fig:roadmap}
+\end{figure}
