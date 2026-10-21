@@ -1,21 +1,27 @@
 \begin{titlepage}
 \pagenumbering{gobble}
 \begin{center}
- %\vspace*{0.5cm}
-\Huge
-Abstract
+\LARGE
+STRATA: Secure Trust-paRtitioned Anchoring for Tiered constrained-IIoT Architecture
 
 \vspace{1.5cm}
 \LARGE
+Chimeremma Sandra Amadi
 
+\vspace{1.5cm}
+\Large
+Department of IT Convergence Engineering,\\
+Graduate School\\
+Kumoh National Institute of Technology
 
-
-
+\vspace{2cm}
+\LARGE
+Abstract
 \end{center}
 \large
 
-This thesis investigates how biomolecular computational workflows (BCWs) can be engineered as verifiable systems that integrate tamper-evident provenance, deterministic output verification, and policy-enforced validity for multi-party exchange. Four complementary implementations are designed, deployed on permissioned ledger infrastructure (Purechain for RQ1, RQ3, and RQ4; Hyperledger Fabric for RQ2) under a shared verification pattern, and empirically evaluated across representative biomedical pipelines addressing four research questions. For RQ1 (Evidence and Provenance), a blockchain-enabled microservices framework integrating a permissioned ledger with decentralised storage and role-based access control achieves 485.96 req/s API throughput, 445 TPS on-chain performance, and zero false positives in SHA-256 tampering detection, with end-to-end provenance validated through an HIV-1 protease case study. For RQ2 (Verifiable Computation), a tri-layered blockchain-integrated verification system extends provenance from tamper-evident history to verification-by-digest, achieving 100\% reproducibility across 5 protein targets and 98.2\% across 20 targets in six structural categories. For RQ3 (Determinism in Practice), a deterministic blockchain-audited virtual screening pipeline processing 71{,}853 compounds across 10 targets demonstrates strong predictive performance (mean $\mathtt{R^2}$ = 0.693, AUC-ROC = 0.937) while passing all component-level determinism tests with 100\% hash verification across 40 re-executions. For RQ4 (Policy-Enforced Validity), a policy-enforced blockchain-credential architecture achieves F1 = 1.00 on quality-control and status anomalies with verification latency of p50 $\sim$ 32 ms independent of registry size. Taken together, these four complementary implementations empirically support the three-dimensional validity conjunction Valid(w) = AuditValid(w) $\wedge$ DeterminismValid(w) $\wedge$ PolicyValid(w), providing a composable trust-stack for reproducible, verifiable, and governance-ready biomolecular computational workflows in which each validity dimension is independently demonstrated and their conjunction characterised architecturally rather than through a single integrated execution.
-  
-\textbf{Keywords: }Biomolecular Computational Workflows, Blockchain, Provenance, Determinism, Verifiable Computation, Policy Enforcement. 
-\end{titlepage}
+The Industrial Internet of Things (IIoT) connects sensors, controllers, and edge nodes that underpin manufacturing, energy, water, and transportation infrastructure. Securing these deployments is difficult because the devices that carry the security burden operate within tight budgets of computation, memory, and energy, while distributed-ledger security is bound by the trilemma of security, scalability, and speed, and the classical cryptography that protects device identity is exposed to a future quantum adversary under the harvest-now, decrypt-later model. This thesis proposes STRATA, a trust-partitioning architecture that places each security function on the layer whose cost profile can sustain it. High-frequency behavioural validation is handled on a fast permissioned ledger close to the devices, while low-frequency, high-value events such as identity anchoring, audit, and revocation are committed as digests to a public anchoring layer. The architecture comprises a lightweight federated behavioural-trust module built on a trimmed one-dimensional Convolutional Neural Network--Long Short-Term Memory (CNN-LSTM) model of 41{,}762 parameters (0.17~MB), and a quantum-resilient identity and credential module based on entropy-seeded identity derivation and compressed lattice-based key delivery. Evaluated against eight federated blockchain approaches and eight ledger-based data-sharing frameworks, STRATA achieves detection accuracy between 96.84\% and 97.70\% with a false positive rate of 1.90\%, finalisation in 0.11~s, ledger metadata occupying 0.13\% of the learning traffic, a 46.6\% ciphertext reduction under reuse-aware delivery, and revocation confirmed in 1.8~s with success above 95\% across a tenfold increase in device population. Realising the architecture on two ledger substrate pairs that share no consensus, execution, or cost model shows that trust-partitioning is a property of the design rather than of a particular ledger, so the trilemma that binds a single ledger is resolved across two.
 
+\vspace{0.5cm}
+\textbf{Keywords: }Industrial Internet of Things, Hybrid Blockchain, Trust Partitioning, Post-Quantum Cryptography, Federated Learning, Intrusion Detection, Resource-Constrained Devices.
+\end{titlepage}

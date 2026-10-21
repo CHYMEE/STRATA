@@ -1,3 +1,4 @@
+\PassOptionsToPackage{table}{xcolor} % pdfpages loads xcolor early; pass [table] here to avoid an option clash
 \documentclass[11pt, onecolumn, oneside, final]{report}
 
 %\usepackage{KITthesis}
@@ -30,10 +31,10 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{balance}
-\usepackage[ruled,linesnumbered]{algorithm2e}
 \usepackage{algorithm}
 \usepackage{algpseudocode} 
 \interdisplaylinepenalty=2500
+\usepackage{amsthm} % must load before newtxmath
 \usepackage[cmintegrals]{newtxmath}
 \usepackage{filecontents}
 \usepackage{float}
@@ -44,7 +45,6 @@
 \usepackage{verbatim}
 %\usepackage[titles]{tocloft}
 \usepackage{amsmath}
-\usepackage{amsthm}
 
 \theoremstyle{plain}          % bold head, italic body
 \newtheorem{theorem}{Theorem}[chapter]
@@ -61,7 +61,7 @@
 \usepackage[subfigure]{tocloft}
 \usepackage{rotating}   
 \usepackage{booktabs}
-\usepackage[table]{xcolor}  
+% xcolor with [table] option is loaded above (loading it twice causes an option clash)
 \usepackage{multirow}
 \usepackage{kotex}
 \usepackage{amsmath}
@@ -95,9 +95,6 @@
 %Spacing in list of figures/tables
 \renewcommand\cftfigafterpnum{\vskip4pt\par}
 \renewcommand\cfttabafterpnum{\vskip4pt\par}
-\makeatletter
-\renewcommand{\l@algocf}{\@dottedtocline{1}{1.5em}{2.8em}}
-\makeatother
 
 \begin{document}
 
@@ -105,15 +102,18 @@
 \includepdf[pages={1}]{Preamble/K-GKS_Scholarship_Page.pdf}   % K-GKS 장학 페이지
 \input{Preamble/01_Title.tex}
 \input{Preamble/02_Title_Sup.tex}
-\includepdf[pages={1}]{Preamble/approval_page.pdf}             % 서명된 인준서
+% approval_page.pdf belongs to another student (Victor Ikenna Kanu, Master's); use the placeholder until the signed STRATA page is scanned
+%\includepdf[pages={1}]{Preamble/approval_page.pdf}             % 서명된 인준서
+\input{Preamble/03_Approval_Placeholder.tex}
 %\input{Preamble/03_Comittee.tex}
 \input{Preamble/04_Abstract_Eng.tex}
 \input{Preamble/05_Abstract_Kor.tex}
 \input{Preamble/06_Declaration_Auth.tex}
-\input{Preamble/Relationship_with_study}
-\input{Preamble/08_Other_Pub.tex}
-\input{Preamble/09_Acknowledgements.tex} %remove
-\input{Preamble/10_Dedication.tex} 
+\input{Preamble/07_Related_Pub.tex}
+%\input{Preamble/08_Other_Pub.tex}
+%\input{Preamble/Relationship_with_study}
+\input{Preamble/09_Acknowledgements.tex}
+\input{Preamble/10_Dedication.tex}
 \input{Preamble/11_Table_Contents.tex}
 \input{Preamble/12_List_Figures.tex}
 \input{Preamble/13_List_Tables.tex}
