@@ -7,8 +7,9 @@ Data sharing has become a foundational enabler of modern industry, research, and
 governance, driving collaborative decision-making, operational efficiency, and
 innovation across organisational boundaries. Its economic weight is now
 substantial: the OECD estimates that data sharing could contribute on the order
-of 2.5\% of global GDP, and regulatory instruments such as the EU Data Act of
-2023 reflect a growing recognition of its strategic importance~\cite{BCG, stripped}.
+of 2.5\% of global GDP~\cite{oecd2019data}, and regulatory instruments such as
+the EU Data Act of 2023 reflect a growing recognition of its strategic
+importance~\cite{eu2023dataact}.
 Within this landscape, the Industrial Internet of Things (IIoT) has emerged as a
 core substrate: heterogeneous sensors, programmable logic controllers,
 actuators, and edge nodes are interconnected to support real-time data
@@ -29,7 +30,7 @@ exposes industrial infrastructure to sophisticated threats, including zero-day
 attacks that evade conventional detection~\cite{amadi2026lightweight}. The threat
 landscape has responded in kind. Operational-technology (OT) environments have
 become mainstream targets: ransomware activity against industrial organisations
-rose by more than 87\% year over year, the number of ransomware groups targeting
+rose by 87\% year over year, the number of ransomware groups targeting
 such organisations grew by 60\% to reach 80, and manufacturing alone accounted
 for more than half of observed victims; roughly one quarter of these incidents
 forced a full shutdown of the affected OT site~\cite{dragos2025}. The financial
@@ -59,16 +60,17 @@ resource-constrained settings the trilemma is at its most acute, since none of
 the three dimensions can be relaxed without unacceptable consequence.
  
 A further pressure compounds the problem. The asymmetric cryptography that
-underpins current authentication and key exchange---RSA and elliptic-curve
-schemes---is vulnerable to a sufficiently capable quantum computer executing
-Shor's algorithm. The risk is not deferred to the arrival of such a machine:
-under the ``harvest-now, decrypt-later'' model, an adversary can capture
-encrypted traffic today and decrypt it retroactively once the capability
-matures, placing data with long confidentiality horizons at present risk. This
+underpins current authentication and key exchange, namely RSA and
+elliptic-curve schemes, is vulnerable to a sufficiently capable quantum computer executing
+Shor's algorithm~\cite{shor1999polynomial}. The risk is not deferred to the
+arrival of such a machine: under the ``harvest-now, decrypt-later'' model, an
+adversary can capture encrypted traffic today and decrypt it retroactively once
+the capability matures, placing data with long confidentiality horizons at
+present risk~\cite{kagai2025harvest}. This
 concern is now codified rather than speculative. In August 2024, the U.S.
 National Institute of Standards and Technology finalised its first
-post-quantum cryptographic standards---FIPS~203 (ML-KEM, derived from
-CRYSTALS-Kyber), FIPS~204 (ML-DSA), and FIPS~205 (SLH-DSA)---concluding a
+post-quantum cryptographic standards, FIPS~203 (ML-KEM, derived from
+CRYSTALS-Kyber), FIPS~204 (ML-DSA), and FIPS~205 (SLH-DSA), concluding a
 standardisation process initiated in 2016~\cite{fips203, fips204, fips205}. For
 constrained IIoT the challenge is sharper still, as post-quantum primitives
 carry larger keys and ciphertexts than the schemes they replace and must be made
@@ -90,11 +92,11 @@ applied uniformly but is partitioned across a tiered architecture:
 high-frequency behavioural validation is routed through a fast, permissioned
 layer close to the devices, while low-frequency, high-value events such as
 identity anchoring, audit, and revocation are committed to a separate public
-layer, as illustrated in Fig.~\ref{trilemma}. Partitioning trust in this way---routing sensitive, high-frequency
-interactions through permissioned consensus while anchoring integrity proofs and
-audit trails on public chains---has been argued to be a structural necessity
-rather than a mere performance optimisation for demanding data-sharing
-environments~\cite{amadi2026security}. This principle of trust-partitioning across a hybrid
+layer, as illustrated in Fig.~\ref{trilemma}. Routing sensitive,
+high-frequency interactions through permissioned consensus while anchoring
+integrity proofs and audit trails on public chains has been argued to be a
+structural necessity rather than a mere performance optimisation for demanding
+data-sharing environments~\cite{amadi2026security}. This principle of trust-partitioning across a hybrid
 ledger, and its realisation within real device budgets and across distinct
 ledger substrates, forms the central contribution of this thesis.
 
@@ -175,24 +177,27 @@ following contributions:
         constrained, mission-critical IIoT, in which high-frequency behavioural
         validation on a fast permissioned layer is separated from low-frequency
         identity anchoring and audit committed to a public layer, and it
-        consolidates three published systems as instances of this single
-        architecture rather than as independent designs.
+        consolidates three published
+        systems~\cite{amadi2026lightweight, amadi2025quantum, amadi2026symmetric}
+        as instances of this single architecture rather than as independent
+        designs.
 
   \item It presents a lightweight federated behavioural-trust module built on a
         trimmed one-dimensional CNN-LSTM model coupled with a resource-optimised
         permissioned ledger, and evaluates it end to end across both the
         artificial-intelligence and blockchain layers, reporting detection
-        performance together with blockchain-side costs.
+        performance together with blockchain-side
+        costs~\cite{amadi2026lightweight}.
 
   \item It presents a quantum-resilient identity and credential module based on
         entropy-seeded identity generation and compressed post-quantum key
         delivery, and demonstrates its feasibility on constrained hardware,
         distinguishing clearly between the components that are implemented and
-        measured and those reserved as design.
+        measured and those reserved as design~\cite{amadi2025quantum}.
 
   \item It demonstrates that the trust-partitioning principle is
         substrate-independent by realising it on two distinct ledger
-        substrates, and it provides a consolidated evaluation, spanning
+        substrates~\cite{amadi2026lightweight, amadi2026symmetric}, and it provides a consolidated evaluation, spanning
         detection performance, resource overhead, blockchain cost, and
         quantum-resilience, that assesses the architecture against the resource
         constraints of industrial edge devices.
