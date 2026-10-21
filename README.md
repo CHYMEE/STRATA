@@ -1,1 +1,1 @@
-# STRATA
+# STRATA is a PhD thesis project
