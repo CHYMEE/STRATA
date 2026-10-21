@@ -1,0 +1,21 @@
+\begin{titlepage}
+\pagenumbering{gobble}
+\begin{center}
+ %\vspace*{0.5cm}
+\Huge
+Abstract
+
+\vspace{1.5cm}
+\LARGE
+
+
+
+
+\end{center}
+\large
+
+This thesis investigates how biomolecular computational workflows (BCWs) can be engineered as verifiable systems that integrate tamper-evident provenance, deterministic output verification, and policy-enforced validity for multi-party exchange. Four complementary implementations are designed, deployed on permissioned ledger infrastructure (Purechain for RQ1, RQ3, and RQ4; Hyperledger Fabric for RQ2) under a shared verification pattern, and empirically evaluated across representative biomedical pipelines addressing four research questions. For RQ1 (Evidence and Provenance), a blockchain-enabled microservices framework integrating a permissioned ledger with decentralised storage and role-based access control achieves 485.96 req/s API throughput, 445 TPS on-chain performance, and zero false positives in SHA-256 tampering detection, with end-to-end provenance validated through an HIV-1 protease case study. For RQ2 (Verifiable Computation), a tri-layered blockchain-integrated verification system extends provenance from tamper-evident history to verification-by-digest, achieving 100\% reproducibility across 5 protein targets and 98.2\% across 20 targets in six structural categories. For RQ3 (Determinism in Practice), a deterministic blockchain-audited virtual screening pipeline processing 71{,}853 compounds across 10 targets demonstrates strong predictive performance (mean $\mathtt{R^2}$ = 0.693, AUC-ROC = 0.937) while passing all component-level determinism tests with 100\% hash verification across 40 re-executions. For RQ4 (Policy-Enforced Validity), a policy-enforced blockchain-credential architecture achieves F1 = 1.00 on quality-control and status anomalies with verification latency of p50 $\sim$ 32 ms independent of registry size. Taken together, these four complementary implementations empirically support the three-dimensional validity conjunction Valid(w) = AuditValid(w) $\wedge$ DeterminismValid(w) $\wedge$ PolicyValid(w), providing a composable trust-stack for reproducible, verifiable, and governance-ready biomolecular computational workflows in which each validity dimension is independently demonstrated and their conjunction characterised architecturally rather than through a single integrated execution.
+  
+\textbf{Keywords: }Biomolecular Computational Workflows, Blockchain, Provenance, Determinism, Verifiable Computation, Policy Enforcement. 
+\end{titlepage}
+

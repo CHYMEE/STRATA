@@ -1,0 +1,150 @@
+\documentclass[11pt, onecolumn, oneside, final]{report}
+
+%\usepackage{KITthesis}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,width=190mm, height = 260mm, left=25mm,right = 25mm, top=25mm,bottom=25mm,bindingoffset=10mm]{geometry}
+% \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=10mm]{geometry}
+\usepackage{cite}
+\usepackage[final]{pdfpages}
+\usepackage{acronym}
+\usepackage{setspace}
+\setstretch{1.4}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\usepackage{graphicx}
+%\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{color, colortbl}
+\definecolor{Gray}{gray}{0.9}
+\usepackage{multirow}
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+\usepackage[noend]{algpseudocode}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{booktabs}
+\usepackage[shortcuts]{extdash}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{balance}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage{algorithm}
+\usepackage{algpseudocode} 
+\interdisplaylinepenalty=2500
+\usepackage[cmintegrals]{newtxmath}
+\usepackage{filecontents}
+\usepackage{float}
+\usepackage[caption=false]{subfig}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes,backgrounds}
+\usepackage{verbatim}
+%\usepackage[titles]{tocloft}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\theoremstyle{plain}          % bold head, italic body
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}     % bold head, upright body
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% Proof: italic head, filled QED square, small space above
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\usepackage[subfigure]{tocloft}
+\usepackage{rotating}   
+\usepackage{booktabs}
+\usepackage[table]{xcolor}  
+\usepackage{multirow}
+\usepackage{kotex}
+\usepackage{amsmath}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\usepackage{indentfirst}
+%\let\oldsection\section
+%\renewcommand{\section}[1]{\oldsection{#1}\setlength{\parindent}{.3in}}
+\newlength\mylength
+\renewcommand\cftchappresnum{\chaptername~}
+\renewcommand\cftchapaftersnum{:~}
+\settowidth\mylength{\cftchappresnum\cftchapaftersnum\quad}
+\addtolength\cftchapnumwidth{\mylength}
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.5}
+\renewcommand{\bibname}{References}
+\cftsetrmarg{0em}% <- Set right margin to zero
+\renewcommand\cftfigpresnum{\figurename~}% <- Prepend `Figure' in front of number
+\renewcommand\cftfigaftersnum{:}% <- Append `:' behind number
+\renewcommand\cftfigaftersnumb{\hspace{5.9em}}% <- Add enough space to start caption text
+\cftsetindents{figure}{0em}{0em}% <- Set left indents to zero
+\usepackage[labelfont=bf]{caption}
+\renewcommand{\cftfigpresnum}{\bfseries Figure }
+% For List of Tables
+\renewcommand{\cfttabpresnum}{\tablename~}
+\renewcommand\cfttabaftersnum{:}
+\renewcommand\cfttabaftersnumb{\hspace{5.9em}}
+\cftsetindents{table}{0em}{0em}
+\renewcommand{\cfttabpresnum}{\bfseries Table }
+%Spacing in list of figures/tables
+\renewcommand\cftfigafterpnum{\vskip4pt\par}
+\renewcommand\cfttabafterpnum{\vskip4pt\par}
+\makeatletter
+\renewcommand{\l@algocf}{\@dottedtocline{1}{1.5em}{2.8em}}
+\makeatother
+
+\begin{document}
+
+\input{Preamble/01_Title.tex}
+\includepdf[pages={1}]{Preamble/K-GKS_Scholarship_Page.pdf}   % K-GKS 장학 페이지
+\input{Preamble/01_Title.tex}
+\input{Preamble/02_Title_Sup.tex}
+\includepdf[pages={1}]{Preamble/approval_page.pdf}             % 서명된 인준서
+%\input{Preamble/03_Comittee.tex}
+\input{Preamble/04_Abstract_Eng.tex}
+\input{Preamble/05_Abstract_Kor.tex}
+\input{Preamble/06_Declaration_Auth.tex}
+\input{Preamble/Relationship_with_study}
+\input{Preamble/08_Other_Pub.tex}
+\input{Preamble/09_Acknowledgements.tex} %remove
+\input{Preamble/10_Dedication.tex} 
+\input{Preamble/11_Table_Contents.tex}
+\input{Preamble/12_List_Figures.tex}
+\input{Preamble/13_List_Tables.tex}
+\input{Preamble/14_List_Algorithms.tex}
+%\input{Preamble/15_List_Equations.tex}
+\input{Preamble/16_Abbreviations.tex}
+
+\chapter{Introduction}
+\input{Chapters/1_Introduction}
+
+\chapter{Background Information}
+\input{Chapters/2_Background}
+
+\chapter{Related Works}
+\input{Chapters/3_Related Works}
+
+\chapter{Proposed Methodology}
+%Research Direction and System  Methodology
+\input{Chapters/4_Methodology}
+
+\chapter{Performance Evaluation and Result Discussion}
+\input{Chapters/5_Performance Evaluation}
+
+\chapter{Conclusion, Future Works and Open Research Issues}
+\input{Chapters/6_Conclusion}
+
+\clearpage
+\phantomsection
+\large
+\addcontentsline{toc}{chapter}{References}
+\bibliography{biblio.bib}
+\bibliographystyle{ieeetr}
+
+\end{document}

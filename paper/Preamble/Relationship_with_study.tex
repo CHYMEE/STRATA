@@ -1,0 +1,43 @@
+\begin{titlepage}
+\section*{\Huge\centering{Relationship Between Prior Publications and This Thesis}}
+\pagenumbering{gobble}
+%\Huge Declaration of Authorship
+
+\vspace{1cm}
+\large
+
+The thesis integrates and substantially extends four peer-reviewed works produced during the master's programme, each corresponding to one research question. Table 1 maps each RQ to its underlying publication, identifies the new material introduced in the thesis beyond the published versions, and states the author's specific contribution to each co-authored work. The unifying validity-composition framework (Chapter 4, Equation 4.28), the cross-RQ synthesis (Section 5.7), and the systematic treatment of trust gaps in BCWs (Chapter 2) are original to this thesis and have not previously been published.
+
+\begin{table}[!htbp]
+\centering
+\caption{Mapping of prior publications to thesis research questions, indicating new material introduced in this thesis and the author's contribution to each co-authored work.}
+\label{tab:publication-thesis-mapping}
+\scalebox{0.70}{
+\begin{tabular}{p{3.2cm} p{4.4cm} p{4.2cm} p{4.6cm}}
+\toprule
+\textbf{RQ / Chapter} & \textbf{Underlying Publication} & \textbf{New in Thesis} & \textbf{Author Contribution} \\
+\midrule
+\textbf{RQ1} --- Tamper-Evident Provenance (\S 4.2, \S 5.3)
+& Kanu, V.I., Isong, J., Ajakwe, S.O., Kim, D.S. \emph{ProtChain: Blockchain-Secured IoT Data Provenance for Biomedical and Scientific Workflows.} PeerJ Computer Science, 2025.
+& Integration into the four-RQ trust-stack; reformulation of the Execute-and-Anchor protocol against the unified canonical-JSON manifest schema (\S 4.4); HIV-1 protease case study extended to align with the validity-conjunction framework.
+& First author. Designed the microservices architecture, implemented the smart contracts and Flask API layer, conducted all benchmarks, and wrote the manuscript. \\
+\addlinespace
+\textbf{RQ2} --- Verifiable Computation (\S 4.3, \S 5.4)
+& Kanu, V.I., Ajakwe, S.O., Lee, J.M., Kim, D.S. \emph{Deterministic Protein Structure and Binding Site Analysis through Blockchain-Integrated Workflow Verification.} ICT Express, 2025.
+& Extension from the original 5-target study to a 20-target scalability benchmark across six structural categories (\S 5.4.4); explicit formulation of the verification-by-digest predicate (\S 4.3.3); analysis of the 1.8\% non-reproducibility cases.
+& First author. Designed the tri-layered verification pipeline, implemented the protein structure preparation and binding-site analysis workflow, conducted the reproducibility evaluation, and wrote the manuscript. \\
+\addlinespace
+\textbf{RQ3} --- Determinism in Practice (\S 4.4, \S 5.5)
+& Kanu, V.I., Ajakwe, S.O., Kim, D.S. \emph{PureProt: An AI-Blockchain Enabled Virtual Screening Platform for Drug Discovery.} ICTC 2025, Jeju Island, South Korea, October 2025.
+& Expansion from the conference paper's single-target demonstration to a 10-target / 71{,}853-compound benchmark with per-target $\alpha$ optimisation (\S 5.5.4); formal characterisation of the hybrid AI--docking conditions under which docking adds value; 40-run determinism verification protocol with PureChain anchoring.
+& First author. Designed the deterministic virtual screening framework, implemented the consensus AI scoring engine, conducted the docking integration and $\alpha$ optimisation, performed the determinism evaluation, and wrote the manuscript. \\
+\addlinespace
+\textbf{RQ4} --- Policy-Enforced Validity (\S 4.5, \S 5.6)
+& Kanu, V.I., Ajakwe, S.O., Kim, D.S. \emph{BioPassport: A Policy-Enforced Blockchain--Credential Architecture for Tamper-Evident Biomaterial Provenance.} IEEE ICBC 2026, Brisbane, Australia, June 2026 (accepted).
+& Integration with the canonical-JSON manifest model (\S 4.5.2); explicit positioning within the validity-conjunction framework as the source of PolicyValid; revision of the throughput characterisation to distinguish mixed-workload from read-only verification regimes (\S 5.6.4).
+& First author. Designed the policy-enforced credential architecture, implemented the \texttt{BioPassportRegistry} and \texttt{BioPassportV2} smart contracts, defined the 12-code structured reason vocabulary, conducted the validity-enforcement evaluation, and wrote the manuscript. \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\end{titlepage}
