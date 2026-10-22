@@ -136,7 +136,7 @@ def fig_roadmap():
     W, H = 7.5, 6.55
     fig = plt.figure(figsize=(W, H), dpi=400)
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
-    RQ, PAP = "#6a1b9a", "#37474f"
+    RQ = "#6a1b9a"
     w, h = 3.25, 1.55
     xl, xr = 0.12, 4.02
     y1, y2, y3 = 4.72, 2.62, 0.52
@@ -144,22 +144,22 @@ def fig_roadmap():
 
     block(ax, xl, y1, w, h, C[0], "Chapter 1: Introduction",
           ["Constrained IIoT and the trilemma", "Quantum threat to device identity", "Research questions, contributions"],
-          [("RQ1–RQ5", RQ), ("Book chapter", PAP)])
+          [("RQ1–RQ5", RQ)])
     block(ax, xr, y1, w, h, C[1], "Chapter 2: Background",
           ["IIoT security landscape", "Federated CNN–LSTM learning", "Ledgers, PoA², hybrid pattern"],
-          [("Book chapter", PAP)])
+          [])
     block(ax, xr, y2, w, h, C[2], "Chapter 3: Related Works",
           ["PRISMA review of 116 studies", "Defence-gap analysis", "Gaps motivating RQ1–RQ5"],
-          [("ICT Express", PAP)])
+          [("RQ1–RQ5", RQ)])
     block(ax, xl, y2, w, h, C[3], "Chapter 4: STRATA Architecture",
           ["Behavioural trust stratum", "Consensus and public anchoring", "Identity and post-quantum planes"],
-          [("RQ1–RQ5", RQ), ("Franklin Open", PAP), ("ICTC", PAP), ("Symmetry", PAP)])
+          [("RQ1–RQ5", RQ)])
     block(ax, xl, y3, w, h, C[4], "Chapter 5: Evaluation",
           ["Accuracy 96.84–97.70%", "Finality 0.11 s and ledger cost", "PQC delivery, revocation 1.8 s"],
-          [("RQ1–RQ5", RQ), ("Franklin Open", PAP), ("ICTC", PAP), ("Symmetry", PAP)])
+          [("RQ1–RQ5", RQ)])
     block(ax, xr, y3, w, h, C[5], "Chapter 6: Conclusion",
           ["Answers to RQ1–RQ5", "Practical concerns", "Future research directions"],
-          [("Contributions", RQ)])
+          [("RQ1–RQ5", RQ)])
 
     arrow(ax, (xl + w + 0.11, y1 + h / 2 - 0.1), (xr - 0.04, y1 + h / 2 - 0.1))
     arrow(ax, (xr + w / 2, y1 - 0.04), (xr + w / 2, y2 + h + 0.11))
@@ -167,7 +167,7 @@ def fig_roadmap():
     arrow(ax, (xl + w / 2, y2 - 0.04), (xl + w / 2, y3 + h + 0.11))
     arrow(ax, (xl + w + 0.11, y3 + h / 2 - 0.1), (xr - 0.04, y3 + h / 2 - 0.1))
 
-    ax.text(W / 2, 0.2, "■ Purple tags: research questions addressed    ■ Grey tags: published work drawn on",
+    ax.text(W / 2, 0.2, "■ Purple tags: research questions addressed",
             ha="center", va="center", fontsize=7.4, fontweight="bold", color="#37474f")
     fig.savefig(os.path.join(OUT, "Fig1_3_roadmap.png"), dpi=400, facecolor="white")
     plt.close(fig)
