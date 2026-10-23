@@ -8,37 +8,36 @@ The STRATA framework secures resource-constrained industrial devices by partitio
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=1.10\textwidth]{figures/Picture133.PNG}
+  \includegraphics[width=\textwidth]{figures/Picture133.PNG}
  \caption[STRATA framework architecture]{Architecture of the proposed STRATA
 framework. The solid arrow marks the high-frequency behavioural commitment
 retained inside the permissioned domain, and the dashed arrow the
 low-frequency digest that crosses the trust-partition boundary to the public
 anchor. Planes~A and~B span all three strata, and the tiered core is realised
 on two ledger substrates, PureChain NSL and SynChain Fabric+Ethereum,
-partitioning by trust-role rather than by consensus mechanism. Drawn for this
-work.}
+partitioning by trust-role rather than by consensus mechanism.}
   \label{fig:strata-arch}
 \end{figure}
 
-The objective of STRATA is the greatest attainable trustworthy security that a constrained deployment can sustain, obtained by assigning each security operation to the stratum whose trust characteristics match it. Let $\pi$ denote such an assignment, $\mathcal{T}(\pi)$ the trustworthiness it delivers, and $\mathcal{R}(\pi)$ its resource footprint. The design solves
+The objective of STRATA is the greatest attainable trustworthy security that a constrained deployment can sustain, obtained by assigning each security operation to the stratum whose trust characteristics match it. Let $\sigma$ denote such an assignment of operations to strata, $\mathcal{T}(\sigma)$ the trustworthiness it delivers, and $\mathcal{R}(\sigma)$ its resource footprint. The design solves
 
 \begin{equation}
 \label{eq:strata-objective}
-\pi^{\star} \;=\; \arg\max_{\pi}\; \mathcal{T}(\pi)
+\sigma^{\star} \;=\; \arg\max_{\sigma}\; \mathcal{T}(\sigma)
 \quad \text{subject to} \quad
-\mathcal{R}_{\text{edge}}(\pi) \le \mathcal{B}_{\text{edge}},
+\mathcal{R}_{\text{edge}}(\sigma) \le \mathcal{B}_{\text{edge}},
 \;\;
-\mathcal{R}_{\text{chain}}(\pi) \le \mathcal{B}_{\text{chain}},
+\mathcal{R}_{\text{chain}}(\sigma) \le \mathcal{B}_{\text{chain}},
 \end{equation}
 
 where $\mathcal{B}_{\text{edge}}$ is the compute, memory, and energy budget of the constrained edge and $\mathcal{B}_{\text{chain}}$ the throughput and storage budget of the ledger. Trustworthiness combines behavioural detection fidelity with anchored verifiability,
 
 \begin{equation}
 \label{eq:strata-trust}
-\mathcal{T}(\pi) \;=\; \sum_{i=1}^{n} \big[\, w_{\tau}\, \tau_i \;+\; w_{\nu}\, \upsilon_i(\pi) \,\big],
+\mathcal{T}(\sigma) \;=\; \sum_{i=1}^{n} \big[\, w_{s}\, s_i \;+\; w_{\upsilon}\, \upsilon_i(\sigma) \,\big],
 \end{equation}
 
-in which $\tau_i \in [0,1]$ is the behavioural trust score of device $d_i$, $\upsilon_i(\pi)\in\{0,1\}$ indicates whether that device's security-relevant events are anchored and hence externally verifiable, and $w_{\tau}, w_{\nu}$ weight detection against verifiability. Equation~\eqref{eq:strata-objective} states the problem the strata jointly solve: the permissioned strata raise $\tau_i$ within the edge budget while the anchoring stratum raises $\upsilon_i$ within the ledger budget, so that neither term improves by exhausting the resources of the other. A centralised or single-ledger arrangement, by contrast, must satisfy both budgets on one layer and therefore cannot maximise either without violating the constraint that constrained hardware imposes.
+in which $s_i \in [0,1]$ is the accumulated behavioural trust score of device $d_i$ (Section~\ref{sec:plane-a}), $\upsilon_i(\sigma)\in\{0,1\}$ indicates whether that device's security-relevant events are anchored and hence externally verifiable, and $w_{s}, w_{\upsilon}$ weight detection against verifiability. Equation~\eqref{eq:strata-objective} states the problem the strata jointly solve: the permissioned strata raise $s_i$ within the edge budget while the anchoring stratum raises $\upsilon_i$ within the ledger budget, so that neither term improves by exhausting the resources of the other. A centralised or single-ledger arrangement, by contrast, must satisfy both budgets on one layer and therefore cannot maximise either without violating the constraint that constrained hardware imposes.
 
 
 
@@ -51,17 +50,17 @@ The placement rests on a single observation. Security-relevant operations differ
 
 \begin{definition}[Trust-partitioning]
 \label{def:trust-partition}
-A security architecture is trust-partitioned if every security-relevant operation $e$ is assigned to exactly one stratum according to its trust-role $\rho(e)=(\phi_e,\nu_e,\xi_e)$, where $\phi_e$ is the operation's frequency, $\nu_e$ its value, and $\xi_e$ its required verifiability scope, such that high-frequency, low-value operations with consortium-internal verifiability are confined to a fast permissioned stratum, low-frequency, high-value operations with external verifiability are committed to a public anchoring stratum, and a single well-defined interface transfers state between the two.
+A security architecture is trust-partitioned if every security-relevant operation $e$ is assigned to exactly one stratum according to its trust-role $\kappa(e)=(\phi_e,\nu_e,\xi_e)$, where $\phi_e$ is the operation's frequency, $\nu_e$ its value, and $\xi_e$ its required verifiability scope, such that high-frequency, low-value operations with consortium-internal verifiability are confined to a fast permissioned stratum, low-frequency, high-value operations with external verifiability are committed to a public anchoring stratum, and a single well-defined interface transfers state between the two.
 \end{definition}
 
-The partition is drawn by trust-role, not by consensus mechanism. This distinction carries the framework's generality: the same assignment of operations to strata can be realised on substrates whose consensus protocols differ entirely, a property developed in Section~\ref{sec:strata-substrate}.
+The partition is drawn by trust-role, not by consensus mechanism. This distinction carries the framework's generality: the same assignment of operations to strata can be realised on substrates whose consensus protocols differ entirely, a property developed in Section~\ref{sec:strata-substrates}.
 
 \subsection{System Model}
 \label{subsec:strata-sysmodel}
 
 The framework serves a set $\mathcal{D}=\{d_1,\dots,d_n\}$ of resource-constrained industrial devices, each generating telemetry and holding key material at the constrained edge. Above this base, security responsibility divides across three strata and two cross-cutting planes.
 
-The behavioural trust stratum scores device conduct in real time. A lightweight federated CNN--LSTM intrusion-detection engine evaluates network and metadata behaviour and emits a continuous trust score $\tau_i \in [0,1]$, committed at device rate on the fast permissioned layer (NSL-L2) so that the verdict is recorded rather than left on the host that computed it. The full detection design is given in Section~\ref{sec:strata-trust}.
+The behavioural trust stratum scores device conduct in real time. A lightweight federated CNN--LSTM intrusion-detection engine evaluates network and metadata behaviour and emits a per-window trust score $q_i \in [0,1]$, committed at device rate on the fast permissioned layer (NSL-L2) so that the verdict is recorded rather than left on the host that computed it. The full detection design is given in Section~\ref{sec:strata-trust}.
 
 The consensus and coordination stratum finalises those commitments. Permissioned finalisation uses the Proof-of-Authority-and-Association protocol with the Smart Auto-Mining Plus mechanism on the coordination layer (NSL-L1), tolerating up to $f=\lfloor (N-1)/2 \rfloor$ faulty or unavailable validators for $N$ authorities. Deterministic finality bounds the latency of a behavioural decision without exposing it publicly.
 
@@ -124,7 +123,41 @@ Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argum
   \end{tabularx}
 \end{table}
 
-The strata and planes are specified individually in the sections that follow, beginning with the behavioural trust-scoring stratum.
+The strata and planes are specified individually in the sections that follow, beginning with the behavioural trust-scoring stratum. Table~\ref{tab:notation} collects the principal notation used throughout the chapter.
+
+\begin{table}[htbp]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.25}
+  \caption{Principal notation used in the specification of STRATA.}
+  \label{tab:notation}
+  \begin{tabularx}{\textwidth}{@{}
+      >{\raggedright\arraybackslash}p{2.2cm}
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}p{2.6cm}@{}}
+    \toprule
+    \textbf{Symbol} & \textbf{Meaning} & \textbf{Introduced in} \\
+    \midrule
+    $\mathcal{D}$, $d_i$ & Set of constrained devices; device $i$ & Section~\ref{subsec:strata-sysmodel} \\
+    $\sigma$ & Assignment of security operations to strata & Eq.~\eqref{eq:strata-objective} \\
+    $\kappa(e)$ & Trust-role of operation $e$: frequency, value, verifiability scope & Definition~\ref{def:trust-partition} \\
+    $q_i$ & Per-window behavioural trust score produced by Stratum~1 & Eq.~\eqref{eq:strata-flag} \\
+    $\delta$ & Flag threshold applied to $q_i$ & Eq.~\eqref{eq:strata-flag} \\
+    $s_i(t)$ & Accumulated device trust score maintained by Plane~A & Eq.~\eqref{eq:trust-decay} \\
+    $\beta$ & Retention factor of the trust-decay law & Eq.~\eqref{eq:trust-decay} \\
+    $\tau$ & Revocation threshold applied to $s_i(t)$ & Section~\ref{sec:plane-a} \\
+    $\omega_i$, $\theta$ & Validator authority weight; weighted acceptance threshold & Eq.~\eqref{eq:poa2-accept} \\
+    $\rho_i(t)$, $\gamma$ & Validator reliability; reliability decay factor & Eq.~\eqref{eq:poa2-reliability} \\
+    $N$, $f$ & Active validator count; tolerated faulty validators & Eq.~\eqref{eq:poa2-fault} \\
+    $E$, $\lambda$ & Epoch span; verdict arrival rate & Definition~\ref{def:epoch} \\
+    $R_k$, $\mathcal{C}_k$ & Epoch root; public commitment for epoch $k$ & Eqs.~\eqref{eq:merkle-root}, \eqref{eq:anchor-tuple} \\
+    $\pi$ & Evidence bundle supporting a revocation & Eq.~\eqref{eq:revoke} \\
+    $H(\cdot)$ & Collision-resistant hash function & Theorem~\ref{thm:verifiability} \\
+    $c_{\mathrm{tx}}$, $\lambda_r$ & Fee per public commitment; revocation rate & Eq.~\eqref{eq:anchor-cost} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \section{The Behavioural Trust-Scoring Stratum}
 \label{sec:strata-trust}
@@ -135,18 +168,18 @@ Two requirements shape the engine. It must run inside the compute, memory, and e
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/Picture 16.png}
-  \caption{Architecture of the behavioural trust-scoring stratum, recaptured from the published lightweight federated design. Resource-constrained clients train a trimmed CNN--LSTM locally on their own telemetry; a coordinator aggregates the local updates into a global model by federated averaging; the resulting per-device trust scores are registered through the fast permissioned layer for commitment.}
+  \caption{Architecture of the behavioural trust-scoring stratum, recaptured from the published lightweight federated design~\cite{amadi2026lightweight}. Resource-constrained clients train a trimmed CNN--LSTM locally on their own telemetry; a coordinator aggregates the local updates into a global model by federated averaging; the resulting per-device trust scores are registered through the fast permissioned layer for commitment.}
   \label{fig:strata-fl-arch}
 \end{figure}
 
 \subsection{Detection Model}
 \label{subsec:strata-model}
-The engine pairs a one-dimensional convolutional front end with a recurrent stage. The convolutional layers act as a feature compressor over packet-flow statistics, capturing short-range structure such as burst rates and protocol flags, and the recurrent stage models the longer-range temporal dependence of an attack that unfolds across a session. A purely convolutional model captures local patterns but lacks temporal memory, while a standalone recurrent model is costlier on constrained hardware; the hybrid keeps inference light by letting the convolutional layers reduce dimensionality before the recurrent stage operates. The engine and its trust-threshold decision are shown in Figure~\ref{fig:strata-cnnlstm}: telemetry is compressed by the convolutional and pooling stage, the LSTM stage captures temporal dependence, and the softmax output yields the trust score $\tau_i$, which the threshold test $\tau_i < \delta$ turns into either a committed trust score on the fast permissioned layer or a revocation event raised to the identity plane.
+The engine pairs a one-dimensional convolutional front end with a recurrent stage. The convolutional layers act as a feature compressor over packet-flow statistics, capturing short-range structure such as burst rates and protocol flags, and the recurrent stage models the longer-range temporal dependence of an attack that unfolds across a session. A purely convolutional model captures local patterns but lacks temporal memory, while a standalone recurrent model is costlier on constrained hardware; the hybrid keeps inference light by letting the convolutional layers reduce dimensionality before the recurrent stage operates. The engine and its trust-threshold decision are shown in Figure~\ref{fig:strata-cnnlstm}: telemetry is compressed by the convolutional and pooling stage, the LSTM stage captures temporal dependence, and the softmax output yields the trust score $q_i$, which the threshold test $q_i < \delta$ turns into either a committed trust score on the fast permissioned layer or a revocation event raised to the identity plane.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/Picture 15.PNG}
-  \caption{Behavioural trust-scoring engine of Stratum~1. Device telemetry over a window $T$ passes through a trimmed one-dimensional CNN and pooling stage for feature compression, an LSTM stage for temporal dependence, and a softmax that yields the per-device trust score $\tau_i\in[0,1]$. The threshold test $\tau_i<\delta$ then either commits the score as a validated trust score to the fast permissioned layer or raises a revocation event to the identity plane.}
+  \caption{Behavioural trust-scoring engine of Stratum~1. Device telemetry over a window $T$ passes through a trimmed one-dimensional CNN and pooling stage for feature compression, an LSTM stage for temporal dependence, and a softmax that yields the per-device trust score $q_i\in[0,1]$. The threshold test $q_i<\delta$ then either commits the score as a validated trust score to the fast permissioned layer or raises a revocation event to the identity plane.}
   \label{fig:strata-cnnlstm}
 \end{figure}
 
@@ -160,10 +193,10 @@ with same-length padding so boundary indices remain well defined. The pooled con
 \label{eq:strata-softmax}
 \hat{y}_j \;=\; \frac{\exp(z_j)}{\sum_{\ell=1}^{C} \exp(z_\ell)}, \qquad \mathbf{z} \;=\; \mathbf{W}_{\text{out}}\,\mathbf{h}_T + \mathbf{b}_{\text{out}}.
 \end{equation}
-The trust score of device $d_i$ is taken as the model's confidence in benign behaviour, $\tau_i \in [0,1]$, obtained from the benign component of $\hat{\mathbf{y}}$ under optional temperature calibration. A device is flagged when its score falls below a predefined trust threshold $\delta$,
+The trust score of device $d_i$ is taken as the model's confidence in benign behaviour, $q_i \in [0,1]$, obtained from the benign component of $\hat{\mathbf{y}}$ under optional temperature calibration. This per-window score is the behavioural evidence that Plane~A accumulates into the device trust score $s_i$ of Equation~\eqref{eq:trust-decay}, so that a single anomalous window raises a flag without by itself withdrawing a credential. A device is flagged when its score falls below a predefined trust threshold $\delta$,
 \begin{equation}
 \label{eq:strata-flag}
-\text{flag}(d_i) \;=\; \mathbf{1}\!\left[\, \tau_i < \delta \,\right],
+\text{flag}(d_i) \;=\; \mathbf{1}\!\left[\, q_i < \delta \,\right],
 \end{equation}
 and a raised flag is the event that Plane~A carries into revocation and that Stratum~3 anchors as a proof. The threshold $\delta$ therefore sets the operating point at which behavioural drift becomes an accountable revocation, linking this stratum to the identity plane of Section~\ref{sec:strata-identity}.
 
@@ -175,7 +208,7 @@ Training keeps data local. Each client $i$ computes an update on its private tel
 \mathbf{w}^{(t+1)} \;=\; \sum_{i\in\mathcal{V}_t} \frac{n_i}{\sum_{j\in\mathcal{V}_t} n_j}\, \mathbf{w}_i^{(t)},
 \end{equation}
 where $n_i$ is the sample count at client $i$ and $\mathcal{V}_t$ is the set of registered clients whose updates are admitted in round $t$.
-where $n_i$ is the sample count at client $i$ and $N$ the total across the $K$ participants. Weighting by local sample count reduces the instability that non-identical client distributions would otherwise introduce. Before a global update is accepted, its provenance is checked at the fast layer: only updates from registered clients, carrying a valid round identifier and timestamp, are admitted, which prevents model-poisoning through malformed or unregistered submissions. Algorithm~\ref{alg:strata-train} states the training and commitment procedure, and Figure~\ref{fig:strata-train-flow} shows the same procedure as an operational flow across its three phases, ending in the trust-scoring and flag step that produces the verdict this stratum commits. Training proceeds in rounds under a metadata-validated admission check, the finalised global model is committed through the fast-layer smart contract, and each device is then scored and either recorded as trusted or raised for revocation according to the threshold test of Equation~\eqref{eq:strata-flag}.
+Weighting by local sample count reduces the instability that non-identical client distributions would otherwise introduce. Before a global update is accepted, its provenance is checked at the fast layer: only updates from registered clients, carrying a valid round identifier and timestamp, are admitted, which prevents model-poisoning through malformed or unregistered submissions. Algorithm~\ref{alg:strata-train} states the training and commitment procedure, and Figure~\ref{fig:strata-train-flow} shows the same procedure as an operational flow across its three phases, ending in the trust-scoring and flag step that produces the verdict this stratum commits. Training proceeds in rounds under a metadata-validated admission check, the finalised global model is committed through the fast-layer smart contract, and each device is then scored and either recorded as trusted or raised for revocation according to the threshold test of Equation~\eqref{eq:strata-flag}.
 
 \begin{algorithm}[t]
 \caption{Federated trust-model training and behavioural commitment}
@@ -208,17 +241,17 @@ local epochs $E$, trust threshold $\delta$
     \State $\hat{\mathbf{y}}_i
     \gets
     \mathcal{F}_{\mathbf{w}^{\star}}(\mathbf{x}_i)$
-    \State $\tau_i
+    \State $q_i
     \gets
     \textsc{BenignConfidence}(\hat{\mathbf{y}}_i)$
     \Comment{Eq.~\eqref{eq:strata-softmax}}
-    \If{$\tau_i < \delta$}
+    \If{$q_i < \delta$}
         \State $\mathrm{flag}(d_i) \gets 1$
         \State Raise revocation event to Plane~A
         \Comment{Eq.~\eqref{eq:strata-flag}}
     \Else
         \State $\mathrm{flag}(d_i) \gets 0$
-        \State Commit $\tau_i$ as a validated behavioural trust score
+        \State Commit $q_i$ as a validated behavioural trust score
     \EndIf
 \EndFor
 \State \Return $\mathbf{w}^{\star}$ and per-device flags
@@ -255,10 +288,11 @@ The trained engine is deliberately small, which is what allows continuous scorin
     Batch size              & 64 \\
     Local epochs per round  & 5 \\
     Loss                    & categorical cross-entropy \\
+    Dropout                 & 0.2 after the LSTM layer \\
     Trainable parameters    & 41{,}762 \\
     \addlinespace
-    Trust score $\tau_i$    & benign-class confidence, $\tau_i\in[0,1]$ \\
-    Flag rule               & $\text{flag}(d_i)=\mathbf{1}[\tau_i<\delta]$, threshold $\delta$ \\
+    Trust score $q_i$    & benign-class confidence, $q_i\in[0,1]$ \\
+    Flag rule               & $\text{flag}(d_i)=\mathbf{1}[q_i<\delta]$, threshold $\delta$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -313,51 +347,10 @@ The division of labour is what keeps the arrangement affordable. Finalisation is
 
 Figure~\ref{fig:strata-ecosystem} shows the five components that realise both strata and the paths along which records travel between them. Records enter at NSL-L2, where the behavioural stratum executes and where verdict digests are assembled. Ordering and acceptance occur at NSL-L1 under the PoA$^2$ acceptance rule, with SAM+ regulating the rate at which blocks are produced so that the permissioned chain neither starves under light industrial load nor saturates during an alarm storm. Only after a block is final does any material leave the permissioned domain, and what leaves is a digest, never a payload, which is the concrete enforcement of Theorem~\ref{thm:verifiability}.
 
-% =====================================================================
-% FIGURE: strata_ecosystem.png
-% STATUS: ADAPTED  (source: PureChain paper, Fig. 5, five-component
-%         ecosystem). Not a verbatim recapture: the STRATA version keeps
-%         the same five components and the same vertical ordering, but
-%         relabels the flow arrows to the vocabulary of this chapter and
-%         drops any component not carried into STRATA. Verify the source
-%         figure before drawing so the component names match exactly.
-%
-% LAYOUT: vertical stack, five bands, top to bottom, one page-width column.
-%   Band 5 (top)    Augmented-L1 public anchor.  Wide open band, drawn
-%                   OUTSIDE a dashed rectangle that encloses bands 1-4.
-%                   The dashed rectangle is the consortium/permissioned
-%                   boundary; label it "permissioned domain" vertically
-%                   along the rectangle edge, never at its foot.
-%   Band 4          NSL-L1 permissioned chain.  Flat linked blocks, 3-4.
-%   Band 3          PoA^2 validator set.  Row of N validator icons; two
-%                   greyed and tagged "standby" with reliability labels
-%                   rho_5, rho_6; the rest solid and tagged "active" with
-%                   weight labels omega_i.  Weight labels appear on ACTIVE
-%                   nodes only.  A vertical double-headed arrow between the
-%                   two groups labelled "promote / demote" with Delta_rho.
-%                   Annotate the group with N = |A|, f = 1.
-%   Band 2          SAM+ coordination service.  A tall box set BESIDE
-%                   bands 3-4, outside the vertical data column.  Two
-%                   distinct single-headed legs: "observed interval" INTO
-%                   SAM+, "inter-block interval" OUT of SAM+ into block
-%                   production.  Never a double-headed arrow.
-%   Band 1 (bottom) NSL-L2 execution layer.  Row of gateway icons, fed
-%                   from below by an edge bus labelled "device telemetry".
-%
-% ARROWS: solid upward arrows band 1 -> 3 -> 4 labelled "verdict digest"
-%   and "block".  Records never pass through SAM+.  ONE dashed upward
-%   arrow only, from band 4 across the boundary into band 5, labelled
-%   "epoch root / revocation proof".  Nothing else crosses; that visual
-%   scarcity is the point of the figure.
-% PALETTE: one hue in tints across bands, warm neutral for band 5, single
-%   accent reserved for the crossing arrow.  Flat shapes only, no 3D
-%   extrusion, no shadows, no gradients.
-% NUMERALS: identify components, not sequence, since SAM+ sits off-column.
-% =====================================================================
 \begin{figure}[t]
   \centering
-  \includegraphics[width=1.10\textwidth]{figures/Picture17.png}
-  \caption{Component ecosystem realising the consensus and public-anchoring strata, comprising the SAM+ coordination service, the PoA$^2$ validator set, the NSL-L2 execution layer, the NSL-L1 permissioned chain, and the Augmented-L1 public anchor. Adapted from the published lightweight federated design.}
+  \includegraphics[width=\textwidth]{figures/Picture17.png}
+  \caption{Component ecosystem realising the consensus and public-anchoring strata, comprising the SAM+ coordination service, the PoA$^2$ validator set, the NSL-L2 execution layer, the NSL-L1 permissioned chain, and the Augmented-L1 public anchor. Adapted from the published lightweight federated design~\cite{amadi2026lightweight}.}
   \label{fig:strata-ecosystem}
 \end{figure}
 
@@ -497,7 +490,7 @@ Two parameters govern the cadence, and they pull against each other. The epoch c
 where $\lambda$ is the verdict arrival rate, $E$ is the epoch span, and $T_{\mathrm{epoch}}$ is the maximum tolerated interval of unanchored exposure. The time bound is what protects a quiet installation: without it, a plant producing few verdicts would leave its history unanchored for arbitrarily long simply because the count never filled. Figure~\ref{fig:strata-epoch} shows the resulting cadence, with routine verdicts accumulating toward an epoch boundary while a sub-threshold verdict leaves immediately by the revocation path. The economic argument for epoch-based anchoring is stated directly.
 \begin{figure}[t]
   \centering
-  \includegraphics[width=1.10\textwidth]{figures/Picture18.png}
+  \includegraphics[width=\textwidth]{figures/Picture18.png}
   \caption{Anchoring cadence at the public stratum. Finalised verdict digests
 accumulate across an epoch and are aggregated into a single root committed
 once per epoch, while a verdict falling below the threshold $\tau$ is
@@ -561,44 +554,10 @@ Table~\ref{tab:device-lifecycle} sets out the states a device occupies between a
 
 The lifecycle is monotone in one direction only. A device may recover from Monitored to Active while its score remains above $\tau$, but no transition returns a device from Revoked to Active, because the credential itself has been withdrawn and its replacement is a fresh enrolment producing a fresh identifier. The asymmetry is what makes a published revocation meaningful: a relying party observing the record on the public substrate does not have to establish whether the finding was later quietly reversed inside the consortium. Figure~\ref{fig:strata-crosschain} shows the crossing itself, from permissioned finalisation on one substrate to the commitment recorded on the other.
 
-% =====================================================================
-% FIGURE: strata_crosschain.png
-% STATUS: ADAPTED  (source: SynChain paper, cross-chain architecture
-%         figure). The source shows Fabric-to-Ethereum commitment for the
-%         data-sharing workflow; the STRATA version keeps that two-column
-%         substrate split and the crossing arrow, but replaces the payload
-%         objects with the digest, epoch-root and revocation objects of
-%         this section. Confirm the exact source figure number before
-%         drawing, and keep the substrate names as they appear there.
-%
-% LAYOUT: two columns separated by a vertical dashed line, landscape.
-%   Divider     Vertical dashed line down the centre, labelled ALONG it
-%               "trust-partition boundary".  Everything crossing this line
-%               must be a digest; that is the claim being drawn.
-%   LEFT column (permissioned domain), top to bottom:
-%     L1  "record r_j" as a document icon
-%     L2  "canonical serialisation" as a narrow box, schema tag v shown
-%     L3  "H_j = H(canonical(r_j))" as a hash token
-%     L4  fan-in of several H_j tokens into a Merkle tree, root R_k
-%     L5  set to one side and lower, a token pair <H(id), H(pi)> tagged
-%         "revocation", NOT entering the tree
-%   RIGHT column (public substrate), top to bottom:
-%     R1  ledger block chain, 3-4 flat linked blocks
-%     R2  rounded box <k, R_k, dom, v, t_k>          [from L4]
-%     R3  rounded box <H(id), H(pi), t_r>            [from L5]
-%     R4  auditor icon at lower right with a magnifier, and a return arrow
-%         back across the divider labelled "read only", drawn thinner
-%   CROSSINGS: exactly TWO arrows cross left to right, L4 -> R2 labelled
-%     "per epoch" and L5 -> R3 labelled "per event".  No third crossing.
-%   GUARD NOTE: the evidence bundle pi is visibly retained on the LEFT in
-%     a small box labelled "retained in domain", with a short arrow into
-%     L5 showing that only its digest leaves.
-% PALETTE: as the ecosystem figure; accent reserved for the two crossings.
-% =====================================================================
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.92\textwidth]{figures/Picture19.PNG}
-  \caption{Cross-boundary commitment path from the permissioned execution and consensus layers to the public anchor, showing digest formation, epoch aggregation, and the revocation channel. Adapted from the published hybrid-ledger cross-chain design.}
+  \caption{Cross-boundary commitment path from the permissioned execution and consensus layers to the public anchor, showing digest formation, epoch aggregation, and the revocation channel. Adapted from the published hybrid-ledger cross-chain design~\cite{amadi2026symmetric}.}
   \label{fig:strata-crosschain}
 \end{figure}
 
@@ -655,7 +614,7 @@ The audit procedure that consumes those commitments is stated separately in Algo
 \end{algorithmic}
 \end{algorithm}
 
-Two properties of the pair deserve emphasis, because they are the properties an evaluator will test. First, the public substrate receives no data whose disclosure could harm the operator: the aggregation channel emits roots, and the revocation channel emits hashed identifiers and evidence commitments, so the anchoring stratum adds durability without adding exposure. Second, the cost the operator pays for that durability is bounded and tunable by a single parameter, the routine public write rate holding at $\lambda/E$ independent of how much behavioural traffic the lower strata process. The measured expression of both properties, in anchoring latency and in per-device overhead on constrained hardware, is reported in Chapter~\ref{ch:evaluation}.
+Two properties of the pair deserve emphasis, because they are the properties an evaluator will test. First, the public substrate receives no data whose disclosure could harm the operator: the aggregation channel emits roots, and the revocation channel emits hashed identifiers and evidence commitments, so the anchoring stratum adds durability without adding exposure. Second, the cost the operator pays for that durability is bounded and tunable by a single parameter, the routine public write rate holding at $\lambda/E$ independent of how much behavioural traffic the lower strata process. The measured expression of both properties, in anchoring latency and in per-device overhead on constrained hardware, is reported in Chapter~\ref{Chapter_5}.
 
 What remains unspecified is the credential that binds a device to the identifier carried in the registration and withdrawal records, the law by which a trust score decays toward the threshold that triggers withdrawal, and the cryptographic substrate that must keep credential and anchored commitment meaningful once classical hardness assumptions no longer hold. Those are the concerns of the two cross-cutting planes, treated in Section~\ref{sec:strata-identity}.
 
@@ -773,14 +732,14 @@ k \;=\; \left\lceil \frac{\ln\!\big( (\tau - q) / (s_i(0) - q) \big)}{\ln \beta}
 \end{proposition}
 
 \begin{proof}
-\textit{Writing the update as a deviation from the evidence level, $s_i(t+1) - q = \beta\,(s_i(t) - q)$, so $s_i(k) - q = \beta^{k}\,(s_i(0) - q)$. Withdrawal occurs at the least $k$ satisfying $s_i(k) \leq \tau$, that is $\beta^{k}(s_i(0) - q) \leq \tau - q$. Both sides are positive because $q < \tau < s_i(0)$, and $\ln \beta < 0$, so taking logarithms and dividing reverses the inequality and yields the stated expression on rounding up to a whole window.}
+Writing the update as a deviation from the evidence level, $s_i(t+1) - q = \beta\,(s_i(t) - q)$, so $s_i(k) - q = \beta^{k}\,(s_i(0) - q)$. Withdrawal occurs at the least $k$ satisfying $s_i(k) \leq \tau$, that is $\beta^{k}(s_i(0) - q) \leq \tau - q$. Both sides are positive because $q < \tau < s_i(0)$, and $\ln \beta < 0$, so taking logarithms and dividing reverses the inequality and yields the stated expression on rounding up to a whole window.
 \end{proof}
 
 Two consequences follow. The first is a design guide: an operator who fixes an acceptable response time can solve the expression for the retention factor rather than tuning it by trial. The second is a limitation. Time to withdrawal grows without bound as the evidence level approaches the threshold from below, so an adversary degrading behaviour just far enough to sit marginally beneath it is withdrawn slowly. That strategy is defeated by detecting the degradation, not by accelerating the decay, since a decay steep enough to catch it would withdraw healthy devices on transient noise. The score is a filter over evidence rather than a detector in its own right, and responsibility for recognising the pattern sits with the behavioural stratum. Figure~\ref{fig:trust-decay} places the scoring loop in the wider credential lifecycle it governs.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=1.1\textwidth]{figures/Picture20.PNG}
+  \includegraphics[width=\textwidth]{figures/Picture20.PNG}
   \caption{Credential mechanism of Plane~A, from entropy-seeded derivation and secure-element binding through the scoring loop to withdrawal. Withdrawal is terminal, and replacement requires re-enrolment under a fresh identifier.}
   \label{fig:trust-decay}
 \end{figure}
@@ -825,7 +784,7 @@ A commitment anchored today is intended to remain checkable for the service life
 
 Key establishment therefore adopts a lattice-based encapsulation mechanism in place of classical key agreement. The sender encapsulates against the recipient public key, obtaining a ciphertext to transmit and a shared secret to retain; the recipient recovers the same secret by decapsulating that ciphertext with the secret key held in its secure element. The shared secret never traverses the network in any form, and the ciphertext discloses nothing about it to an observer lacking the secret key.
 
-The obstacle to deploying this on constrained hardware is size rather than speed. Lattice ciphertexts and public keys are substantially larger than their elliptic-curve counterparts, and on low-rate industrial radio links the transmission cost of that expansion dominates the computational cost of the primitive itself. A reversible compression is therefore applied to the ciphertext before transmission and inverted on receipt. The map is lossless with respect to the decapsulation input, so the shared secret recovered after inversion is identical to the one that would have been recovered from the uncompressed ciphertext, and the security argument for the underlying mechanism is unaffected. The reduction achieved and its effect on end-to-end handshake latency on constrained hardware are reported in Chapter~\ref{ch:evaluation}.
+The obstacle to deploying this on constrained hardware is size rather than speed. Lattice ciphertexts and public keys are substantially larger than their elliptic-curve counterparts, and on low-rate industrial radio links the transmission cost of that expansion dominates the computational cost of the primitive itself. A reversible compression is therefore applied to the ciphertext before transmission and inverted on receipt. The map is lossless with respect to the decapsulation input, so the shared secret recovered after inversion is identical to the one that would have been recovered from the uncompressed ciphertext, and the security argument for the underlying mechanism is unaffected. The reduction achieved and its effect on end-to-end handshake latency on constrained hardware are reported in Chapter~\ref{Chapter_5}.
 
 Table~\ref{tab:pq-placement} records where each primitive sits in the architecture and which exposure it answers, together with the migration status of each position.
 
@@ -883,7 +842,7 @@ Two instantiations are used. The first realises all three strata on a purpose-bu
 
 \begin{definition}
 \label{def:faithful-instantiation}
-\textit{An instantiation of the architecture on a given substrate pair is faithful when four conditions hold: behavioural scoring executes on a layer whose write cost permits per-observation commitment; finalisation is decided by a bounded, identified validator set rather than by open participation; the material crossing the trust boundary consists of digests and hashed identifiers only; and withdrawal of a credential is published on the public side without disclosing the evidence that justified it.}
+An instantiation of the architecture on a given substrate pair is faithful when four conditions hold: behavioural scoring executes on a layer whose write cost permits per-observation commitment; finalisation is decided by a bounded, identified validator set rather than by open participation; the material crossing the trust boundary consists of digests and hashed identifiers only; and withdrawal of a credential is published on the public side without disclosing the evidence that justified it.
 \end{definition}
 
 Faithfulness is what the two instantiations are required to demonstrate, and it is deliberately stated in terms of roles rather than mechanisms. Nothing in the four conditions names a consensus algorithm, a block interval or a ledger. A substrate satisfies them by whatever means it has available, which is precisely the claim under test: that the partition is specified at the level of trust roles and is therefore portable across the mechanisms that discharge them.
@@ -932,9 +891,9 @@ Table~\ref{tab:substrate-mapping} sets the two instantiations against each other
 The final row is where the two instantiations diverge most sharply, and it is the row that matters most for deployment. Anchoring on a fee-bearing public chain converts the epoch span from a tuning parameter into a budget decision, since every commitment carries a direct cost, whereas anchoring on a zero-fee chain makes the same parameter a question of storage and audit latency alone. Combining the bounded write rate established for the anchoring stratum with a per-commitment fee gives the anchoring cost per unit time on a fee-bearing substrate:
 \begin{equation}
 \label{eq:anchor-cost}
-C \;=\; \frac{\lambda}{E} \, c_{\mathrm{tx}} \;+\; \nu \, c_{\mathrm{tx}} ,
+C \;=\; \frac{\lambda}{E} \, c_{\mathrm{tx}} \;+\; \lambda_r \, c_{\mathrm{tx}} ,
 \end{equation}
-where $\lambda$ is the verdict arrival rate, $E$ is the epoch span, $c_{\mathrm{tx}}$ is the fee for a single commitment, and $\nu$ is the revocation rate. The first term is compressible by raising the epoch span and the second is not, since revocations are published per event, so the floor on anchoring cost is set by how often devices are withdrawn rather than by how much behavioural traffic the installation generates. An operator with a fixed anchoring budget can therefore solve for the epoch span that meets it, subject to the exposure bound that governs how long the permissioned history may remain unanchored. On the zero-fee instantiation both terms vanish and the span is chosen on audit latency alone, which is why the same architecture admits very different operating points on the two substrates.
+where $\lambda$ is the verdict arrival rate, $E$ is the epoch span, $c_{\mathrm{tx}}$ is the fee for a single commitment, and $\lambda_r$ is the revocation rate. The first term is compressible by raising the epoch span and the second is not, since revocations are published per event, so the floor on anchoring cost is set by how often devices are withdrawn rather than by how much behavioural traffic the installation generates. An operator with a fixed anchoring budget can therefore solve for the epoch span that meets it, subject to the exposure bound that governs how long the permissioned history may remain unanchored. On the zero-fee instantiation both terms vanish and the span is chosen on audit latency alone, which is why the same architecture admits very different operating points on the two substrates.
 
 Figure~\ref{fig:substrate-instantiation} places the two instantiations side by side, with the role labels held constant across both panels so that substitution of the underlying components is visible at a glance.
 
@@ -1043,5 +1002,5 @@ The PureChain deployment is operated as a shared network rather than provisioned
 \end{table}
 The two environments differ in three respects that bear directly on how the following chapter should be read. Training is federated across five clients in the first instantiation and centralised in the second, so behavioural results are not directly comparable between them and are reported separately. The datasets likewise differ, the first instantiation evaluating on a public benchmark together with an internally generated IIoT set of 57 features and the second on NSL-KDD with 41 features across five classes. Anchoring economics differ by construction, the first instantiation writing to a zero-fee anchor and the second to a fee-bearing public chain with a fourteen-second block time and a confirmation depth of three.
 
-What does carry across is the partition itself. Behavioural scoring is committed per observation window on a fast permissioned layer in both, finalization is decided by a bounded identified validator set in both, and the material crossing to the public side is a digest in both. The measurements that follow are therefore reported per instantiation, and the cross-substrate claim rests on the structural correspondence. 
+What does carry across is the partition itself. Behavioural scoring is committed per observation window on a fast permissioned layer in both, finalisation is decided by a bounded identified validator set in both, and the material crossing to the public side is a digest in both. The measurements that follow are therefore reported per instantiation, and the cross-substrate claim rests on the structural correspondence. 
  
