@@ -1,43 +1,47 @@
 \begin{titlepage}
-\section*{\Huge\centering{Relationship Between Prior Publications and This Thesis}}
 \pagenumbering{gobble}
-%\Huge Declaration of Authorship
+\section*{\Huge\centering{Relationship Between Prior Publications and This Thesis}}
 
-\vspace{1cm}
+\vspace{0.5cm}
 \large
 
-The thesis integrates and substantially extends four peer-reviewed works produced during the master's programme, each corresponding to one research question. Table 1 maps each RQ to its underlying publication, identifies the new material introduced in the thesis beyond the published versions, and states the author's specific contribution to each co-authored work. The unifying validity-composition framework (Chapter 4, Equation 4.28), the cross-RQ synthesis (Section 5.7), and the systematic treatment of trust gaps in BCWs (Chapter 2) are original to this thesis and have not previously been published.
+This thesis integrates and extends five peer-reviewed works produced during the doctoral programme, on each of which the author is first author. Table~\ref{tab:publication-thesis-mapping} maps each work to the chapters that draw on it and identifies the material introduced in the thesis beyond the published version. The trust-partitioning definition and the verifiability theorem (Section~\ref{subsec:strata-theorem}), the anchoring-rate and revocation-delay propositions, the decay-based trust law with its streak trigger (Section~\ref{sec:plane-a}), the role-based definition of a faithful instantiation (Section~\ref{sec:strata-substrates}), and the consolidated answers to the research questions (Table~\ref{tab:rq-answers}) are original to this thesis and have not previously been published.
 
 \begin{table}[!htbp]
 \centering
-\caption{Mapping of prior publications to thesis research questions, indicating new material introduced in this thesis and the author's contribution to each co-authored work.}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\caption{Mapping of prior publications to the chapters of this thesis, with the material introduced in the thesis beyond each published work.}
 \label{tab:publication-thesis-mapping}
-\scalebox{0.70}{
-\begin{tabular}{p{3.2cm} p{4.4cm} p{4.2cm} p{4.6cm}}
+\begin{tabularx}{\textwidth}{@{}
+    >{\raggedright\arraybackslash}p{3.6cm}
+    >{\raggedright\arraybackslash}p{2.6cm}
+    >{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{RQ / Chapter} & \textbf{Underlying Publication} & \textbf{New in Thesis} & \textbf{Author Contribution} \\
+\textbf{Publication} & \textbf{Used in} & \textbf{New in this thesis} \\
 \midrule
-\textbf{RQ1} --- Tamper-Evident Provenance (\S 4.2, \S 5.3)
-& Kanu, V.I., Isong, J., Ajakwe, S.O., Kim, D.S. \emph{ProtChain: Blockchain-Secured IoT Data Provenance for Biomedical and Scientific Workflows.} PeerJ Computer Science, 2025.
-& Integration into the four-RQ trust-stack; reformulation of the Execute-and-Anchor protocol against the unified canonical-JSON manifest schema (\S 4.4); HIV-1 protease case study extended to align with the validity-conjunction framework.
-& First author. Designed the microservices architecture, implemented the smart contracts and Flask API layer, conducted all benchmarks, and wrote the manuscript. \\
+Blockchain trilemma in autonomous intelligent vehicles, book chapter~\cite{aiv_own}
+  & Chapters~1 and~2
+  & The trilemma recast for constrained industrial devices rather than vehicles, and resolved by placement across two ledgers rather than optimisation within one \\
 \addlinespace
-\textbf{RQ2} --- Verifiable Computation (\S 4.3, \S 5.4)
-& Kanu, V.I., Ajakwe, S.O., Lee, J.M., Kim, D.S. \emph{Deterministic Protein Structure and Binding Site Analysis through Blockchain-Integrated Workflow Verification.} ICT Express, 2025.
-& Extension from the original 5-target study to a 20-target scalability benchmark across six structural categories (\S 5.4.4); explicit formulation of the verification-by-digest predicate (\S 4.3.3); analysis of the 1.8\% non-reproducibility cases.
-& First author. Designed the tri-layered verification pipeline, implemented the protein structure preparation and binding-site analysis workflow, conducted the reproducibility evaluation, and wrote the manuscript. \\
+Security-critical data exchange in digital twin ecosystems, ICT Express~\cite{amadi2026security}
+  & Chapter~3; Section~\ref{sec:hybrid-ledgers}
+  & Review applied to constrained IIoT; corpus complemented by studies published after the search window; state-of-the-art summary and mapping of research gaps to research questions \\
 \addlinespace
-\textbf{RQ3} --- Determinism in Practice (\S 4.4, \S 5.5)
-& Kanu, V.I., Ajakwe, S.O., Kim, D.S. \emph{PureProt: An AI-Blockchain Enabled Virtual Screening Platform for Drug Discovery.} ICTC 2025, Jeju Island, South Korea, October 2025.
-& Expansion from the conference paper's single-target demonstration to a 10-target / 71{,}853-compound benchmark with per-target $\alpha$ optimisation (\S 5.5.4); formal characterisation of the hybrid AI--docking conditions under which docking adds value; 40-run determinism verification protocol with PureChain anchoring.
-& First author. Designed the deterministic virtual screening framework, implemented the consensus AI scoring engine, conducted the docking integration and $\alpha$ optimisation, performed the determinism evaluation, and wrote the manuscript. \\
+Lightweight data security system for resource-constrained IIoT devices, Franklin Open~\cite{amadi2026lightweight}
+  & Sections~\ref{sec:strata-trust}, \ref{sec:strata-anchor}; Sections~\ref{sec:eval-evidence} to~\ref{sec:eval-security}
+  & The detector integrated as Stratum~1 of a partitioned architecture; its score linked to the Plane~A trust law; epoch-based anchoring formalised with Merkle aggregation and independent verification \\
 \addlinespace
-\textbf{RQ4} --- Policy-Enforced Validity (\S 4.5, \S 5.6)
-& Kanu, V.I., Ajakwe, S.O., Kim, D.S. \emph{BioPassport: A Policy-Enforced Blockchain--Credential Architecture for Tamper-Evident Biomaterial Provenance.} IEEE ICBC 2026, Brisbane, Australia, June 2026 (accepted).
-& Integration with the canonical-JSON manifest model (\S 4.5.2); explicit positioning within the validity-conjunction framework as the source of PolicyValid; revision of the throughput characterisation to distinguish mixed-workload from read-only verification regimes (\S 5.6.4).
-& First author. Designed the policy-enforced credential architecture, implemented the \texttt{BioPassportRegistry} and \texttt{BioPassportV2} smart contracts, defined the 12-code structured reason vocabulary, conducted the validity-enforcement evaluation, and wrote the manuscript. \\
+Quantum-resilient key and identity lifecycle architecture, ICTC 2025~\cite{amadi2025quantum}
+  & Section~\ref{sec:strata-identity}; Section~\ref{sec:eval-identity}
+  & Identity and key delivery placed as cross-cutting planes and bound to revocation and anchoring; savings restated against the 768-byte ciphertext actually transmitted \\
+\addlinespace
+Symmetric--asymmetric security synergy, Symmetry~\cite{amadi2026symmetric}
+  & Sections~\ref{sec:plane-a}, \ref{sec:strata-substrates}; Sections~\ref{sec:eval-isolation}, \ref{sec:eval-substrate}
+  & Realisation recast as the second instantiation of one partition; role-based comparison with the first instantiation; additive trust law related to the decay law of Plane~A \\
 \bottomrule
-\end{tabular}}
+\end{tabularx}
 \end{table}
 
 \end{titlepage}

@@ -117,7 +117,7 @@ Energy consumed per prediction is estimated from computational volume, as given 
 \label{eq:m-energy}
 E_{inf} \;=\; \frac{\Phi}{10^{3}} \times \varepsilon ,
 \end{equation}
-where $\Phi$ is the number of floating-point operations per inference and $\varepsilon$ the energy attributed to each thousand such operations, taken as one millijoule per thousand operations under the standard embedded-power estimation for low-power microcontrollers. This metric determines operating life for battery-powered and energy-harvesting nodes, and is reported as an estimate obtained from that power model rather than as an instrumented measurement.
+where $\Phi$ is the number of floating-point operations per inference and $\varepsilon$ the energy attributed to each thousand such operations under the embedded-power estimation for low-power microcontrollers adopted in the published realisation of the behavioural module~\cite{amadi2026lightweight}. This metric determines operating life for battery-powered and energy-harvesting nodes, and is reported as an estimate obtained from that power model rather than as an instrumented measurement.
 
 \subsection{Communication Overhead ($C_{ov}$)}
 \label{sec:metric-comms}
@@ -487,7 +487,7 @@ The column that decides feasibility, however, is memory, and there the compariso
   \label{fig:res-feasibility}
 \end{figure}
 
-Two qualifications belong with these figures and are better stated here than discovered later. The energy value is an estimate obtained from a standard embedded-power model attributing one millijoule to each thousand floating-point operations, rather than a measurement taken from an instrumented device, and it should be read as an order-of-magnitude indication for the comparison rather than as a device-specific value. The latency and occupancy figures were obtained on an ARM Cortex-A53 class environment, which sits at the capable end of the constrained spectrum; a microcontroller-class part with a lower clock would be slower in proportion, though the memory figures that decide feasibility would be unchanged, since they follow from parameter count and encoding rather than from processor speed.
+Two qualifications belong with these figures and are better stated here than discovered later. The energy value is an estimate obtained from an embedded-power model of a low-power microcontroller~\cite{amadi2026lightweight}, rather than a measurement taken from an instrumented device, and it should be read as an order-of-magnitude indication for the comparison rather than as a device-specific value. The latency and occupancy figures were obtained on an ARM Cortex-A53 class environment, which sits at the capable end of the constrained spectrum; a microcontroller-class part with a lower clock would be slower in proportion, though the memory figures that decide feasibility would be unchanged, since they follow from parameter count and encoding rather than from processor speed.
 
 The resource evidence therefore settles the half of the question the two preceding subsections left open. Behavioural scoring fits within the compute, memory, and energy budgets of constrained industrial hardware, with the binding constraint satisfied at under three fifths of the smaller budget, and the ledger participation the architecture requires adds under two tenths of one per cent to the link the device already uses. Taken with the detection results, the module operates inside real device budgets without sacrificing detection performance, which is what the behavioural stratum was required to demonstrate.
 

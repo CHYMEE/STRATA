@@ -95,6 +95,8 @@
 %Spacing in list of figures/tables
 \renewcommand\cftfigafterpnum{\vskip4pt\par}
 \renewcommand\cfttabafterpnum{\vskip4pt\par}
+% Allow extra inter-word stretch only where a line would otherwise overrun the margin
+\setlength{\emergencystretch}{3em}
 
 \begin{document}
 
@@ -110,7 +112,7 @@
 \input{Preamble/06_Declaration_Auth.tex}
 \input{Preamble/07_Related_Pub.tex}
 %\input{Preamble/08_Other_Pub.tex}
-%\input{Preamble/Relationship_with_study}
+\input{Preamble/Relationship_with_study}
 \input{Preamble/09_Acknowledgements.tex}
 \input{Preamble/10_Dedication.tex}
 \input{Preamble/11_Table_Contents.tex}
@@ -126,17 +128,17 @@
 \chapter{Background Information}
 \input{Chapters/2_Background}
 
-\chapter{Related Works}
+\chapter{Review of Related Works}
 \input{Chapters/3_Related Works}
 
-\chapter{Proposed Methodology}
+\chapter{Proposed STRATA Architecture}
 %Research Direction and System  Methodology
 \input{Chapters/4_Methodology}
 
 \chapter{Performance Evaluation and Result Discussion}
 \input{Chapters/5_Performance Evaluation}
 
-\chapter{Conclusion, Future Works and Open Research Issues}
+\chapter{Conclusion, Practical Concerns and Future Works}
 \input{Chapters/6_Conclusion}
 
 \clearpage
