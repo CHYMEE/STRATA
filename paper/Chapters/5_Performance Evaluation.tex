@@ -87,8 +87,6 @@ where $N$ is the number of samples, $y_i$ the true label of sample $i$, and $\ha
 \subsection{Model Memory Footprint ($M_f$)}
 \label{sec:metric-memory}
 
-% VERIFIED: paper states 41,762 parameters -> 0.17 MB "when encoded in float32".
-% 41,762 x 4 = 167,048 bytes = 0.167 MB decimal, and matches the 167 kB update size.
 Storage demanded by the behavioural model is determined by its parameter count and numeric representation, given by Equation~\eqref{eq:m-memory}.
 \begin{equation}
 \label{eq:m-memory}
@@ -109,9 +107,6 @@ where $t_i^{in}$ and $t_i^{out}$ are the times at which sample $i$ enters and le
 \subsection{Processor Utilisation ($U_{cpu}$)}
 \label{sec:metric-cpu}
 
-% VERIFIED AS A MEASURED QUANTITY ONLY. The paper reports 6-9% at 50 inferences/s
-% with 3.1 ms latency; that pair is not reproduced by rate x latency, so no
-% derivation is asserted here.
 Processor utilisation is the proportion of available processor time occupied by continuous behavioural scoring, observed directly on the target platform at a stated sustained inference rate rather than derived from per-sample latency. It is reported alongside latency because a device may satisfy a latency requirement while leaving insufficient headroom for the function it was installed to perform.
 
 \subsection{Energy per Inference ($E_{inf}$)}
@@ -178,8 +173,6 @@ where $S_{o}$ is the original ciphertext size and $S_{c}$ the size actually tran
 \subsection{Key Exchange Latency ($T_{kex}$)}
 \label{sec:metric-kex}
 
-% MEASURED QUANTITY. No decomposition into encapsulation, transmission and
-% decapsulation terms is asserted, as the source reports the aggregate only.
 Key exchange latency is the average end-to-end time required to establish shared session material between two parties, measured across repeated exchanges and reported together with the processor utilisation observed during them. Reporting the two together is necessary because a delivery scheme may reduce latency while raising processor load, and on a device with other duties that is not an improvement.
 
 \subsection{Entropy Quality ($H_{\infty}$, $H$)}
@@ -196,17 +189,17 @@ where $p_i$ is the observed probability of outcome $i$ across the sampled seeds.
 \subsection{Trust Score Evolution and Revocation Condition}
 \label{sec:metric-trust}
 
-Device trust evolves across behaviour cycles according to Equation~\eqref{eq:m-trust}, decreasing on anomalous behaviour and recovering on normal behaviour.
+Device trust is maintained by the law of Plane~A (Section~\ref{sec:plane-a}). The isolation experiments of the second instantiation realise that law in its additive form, in which the score is credited for normal behaviour and penalised for anomalous behaviour at each cycle, as expressed by Equation~\eqref{eq:m-trust}.
 \begin{equation}
 \label{eq:m-trust}
-\tau_i(t) \;=\; \tau_i(t-1) + \Delta_{norm} - \Delta_{anom} ,
+s_i(t) \;=\; \min\!\Big(1,\; \max\!\big(0,\; s_i(t-1) + \Delta_{norm} - \Delta_{anom}\big)\Big) ,
 \end{equation}
-where $\tau_i(t)$ is the trust score of device $i$ at cycle $t$, $\Delta_{norm}$ the increment credited for normal behaviour, and $\Delta_{anom}$ the penalty applied on detection of an anomaly. Withdrawal is triggered by either of two independent conditions, expressed by Equation~\eqref{eq:m-revoke}.
+where $s_i(t)$ is the trust score of device $i$ at cycle $t$, $\Delta_{norm}$ the increment credited for normal behaviour, and $\Delta_{anom}$ the penalty applied when the behavioural score $q_i(t)$ falls below the flag threshold $\delta$. The additive form is the linear counterpart of the decay law of Equation~\eqref{eq:trust-decay}: it shares the same threshold semantics and the same terminal withdrawal, but a sustained anomaly lowers the score by a constant amount per cycle rather than geometrically, which makes the number of cycles to withdrawal exactly computable. Withdrawal is triggered by either of two independent conditions, expressed by Equation~\eqref{eq:m-revoke}.
 \begin{equation}
 \label{eq:m-revoke}
-\mathrm{Revoke}(\mathrm{ID}_i) \iff \tau_i(t) < \mu_T \;\; \text{or} \;\; S_i(t) > \mu_2 ,
+\mathrm{Revoke}(\mathrm{id}_i) \iff s_i(t) < \tau \;\; \text{or} \;\; S_i(t) > \mu_S ,
 \end{equation}
-where $\mu_T$ is the revocation threshold, $S_i(t)$ the anomaly streak counter, and $\mu_2$ the streak limit. The streak counter is maintained by Equation~\eqref{eq:m-streak}.
+where $\tau$ is the revocation threshold, $S_i(t)$ the anomaly streak counter, and $\mu_S$ the streak limit. The streak counter is maintained by Equation~\eqref{eq:m-streak}.
 \begin{equation}
 \label{eq:m-streak}
 S_i(t) \;=\;
@@ -214,7 +207,8 @@ S_i(t) \;=\;
 S_i(t-1) + 1, & \text{if an anomaly occurs at cycle } t, \\
 0, & \text{if behaviour is normal at cycle } t.
 \end{cases}
-\end{equation} The two conditions address different adversaries: the threshold catches gradual degradation accumulated over many cycles, and the streak catches abrupt compromise before the score has had time to fall.
+\end{equation}
+The two conditions address different adversaries: the threshold catches gradual degradation accumulated over many cycles, and the streak catches abrupt compromise before the score has had time to fall.
 
 \subsection{Revocation Latency ($T_{rev}$)}
 \label{sec:metric-revocation-latency}
@@ -280,11 +274,13 @@ Behavioural scoring supplies the evidence on which every subsequent decision in 
     \toprule
     \textbf{Dataset} & \textbf{$A_{cc}$ (\%)} & \textbf{$P_r$ (\%)} & \textbf{$R_c^{+}$ (\%)} & \textbf{$F_1$ (\%)} & \textbf{$F_{pr}$ (\%)} & \textbf{$F_{nr}$ (\%)} \\
     \midrule
-    CIC-Collections2023 & 97.70 & None & 97.70 & 97.70 & None & None \\
-    Internal IIoT set & 96.84 & None & 96.33 & 96.52 & None & None \\
+    CIC-Collections2023 & 97.70 & n/r & 97.70 & 97.70 & n/r & n/r \\
+    Internal IIoT set & 96.84 & n/r & 96.33 & 96.52 & n/r & n/r \\
     NSL-KDD & 97.40 & 95.10 & 98.20 & 96.80 & 1.90 & 0.70 \\
     \bottomrule
   \end{tabularx}
+  \vspace{2pt}
+  \parbox{\linewidth}{\footnotesize n/r: not reported for that dataset.}
 \end{table}
  
 First, the module demonstrated consistently high detection capability, with accuracy spanning 96.84\% to 97.70\% across datasets built by different means and carrying different attack classes. The strongest aggregate result was obtained on the public benchmark at 97.70\% accuracy with F1 at the same value, and the weakest on the internally generated industrial set at 96.84\% accuracy and 96.52\% F1. That the weakest case is the synthetic industrial set rather than a curated public benchmark is the informative outcome, since the industrial set carries device-level noise, protocol variation, and lightweight attack signatures that curated benchmarks omit. A spread of 0.86 percentage points between the easiest and hardest of the three indicates that the detector is not leaning on the particular traffic patterns of any one of them.
@@ -352,7 +348,7 @@ One round runs against the trend and is worth examining rather than averaging aw
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.02\textwidth]{figures/Picture24.png}
+\includegraphics[width=\textwidth]{figures/Picture24.png}
   \caption{Convergence of accuracy (a), recall (b), F1-score (c) and precision (d) across twenty federated communication rounds on CIC-Collections2023.}
   \label{fig:res-convergence}
 \end{figure}
@@ -396,7 +392,7 @@ Variation across folds stays below 0.40\% on both datasets, at 0.31\% on the pub
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1.02\textwidth]{figures/Picture26.png}
+  \includegraphics[width=\textwidth]{figures/Picture26.png}
   \caption{Five-fold cross-validated accuracy and F1-score on CIC-Collections2023 and the internal IIoT dataset. Error bars show one standard deviation of accuracy across folds.}
   \label{fig:res-cv}
 \end{figure}
@@ -447,7 +443,7 @@ The ledger contributes almost nothing to the uplink it shares with the learning 
 This proportion is the correct one for the architecture. The ledger exists to commit evidence about behaviour, and an arrangement in which commitment consumed a material share of the link carrying that behaviour would have inverted the relationship between the two. The on-chain validation accompanying each commitment consumes 65{,}618 gas and completes in approximately 0.11~s, so the computational cost of committing evidence is borne by the permissioned layer rather than by the device.
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.05\textwidth]{figures/Picture28.png}
+\includegraphics[width=\textwidth]{figures/Picture28.png}
   \caption{Per-round uplink composition at one, five and ten participating clients, split between the federated model update and the ledger commitment metadata, with the ledger share shown separately.}
   \label{fig:res-uplink}
 \end{figure}
@@ -470,10 +466,10 @@ Whether these figures are favourable in absolute terms is established by compari
     \toprule
     \textbf{Architecture} & \textbf{Parameters} & \textbf{$M_f$ (MB)} & \textbf{$T_{inf}$ (ms)} & \textbf{$E_{inf}$ (mJ)} & \textbf{$C_{ov}$ (kB)} & \textbf{Suitability} \\
     \midrule
-    Generative adversarial detector & 8.7\,M & 10.5 & 22.7 & 4.5 & 812 & High overhead \\
-    EfficientNet-B0 & 4.0\,M & 5.3 & 18.4 & 3.1 & 560 & High overhead \\
-    Capsule autoencoder & 1.2\,M & 1.8 & 11.2 & 1.9 & 240 & Medium \\
-    Convolutional and multilayer hybrid & 620\,k & 0.9 & 9.5 & 1.2 & 180 & Medium \\
+    Generative adversarial detector~\cite{enhanced} & 8.7\,M & 10.5 & 22.7 & 4.5 & 812 & High overhead \\
+    EfficientNet-B0~\cite{FLBC-IDS} & 4.0\,M & 5.3 & 18.4 & 3.1 & 560 & High overhead \\
+    Capsule autoencoder~\cite{Anitha2} & 1.2\,M & 1.8 & 11.2 & 1.9 & 240 & Medium \\
+    Convolutional and multilayer hybrid~\cite{Metaverse} & 620\,k & 0.9 & 9.5 & 1.2 & 180 & Medium \\
     Behavioural module & 41{,}762 & 0.17 & 3.1 & 0.42 & 167 & Lightweight \\
     \bottomrule
   \end{tabularx}
@@ -486,7 +482,7 @@ The column that decides feasibility, however, is memory, and there the compariso
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.05\textwidth]{figures/Picture27.png}
+\includegraphics[width=\textwidth]{figures/Picture27.png}
   \caption{Memory footprint against inference latency for the behavioural module and four comparator architectures, with marker area proportional to parameter count and the device memory budget shaded.}
   \label{fig:res-feasibility}
 \end{figure}
@@ -533,7 +529,7 @@ Whether these costs are favourable relative to alternatives is established by co
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1.02\textwidth]{figures/Picture30.png}
+  \includegraphics[width=\textwidth]{figures/Picture30.png}
   \caption{Gas consumed by the contract operations on the permissioned network and on two public networks.}
   \label{fig:led-gas}
 \end{figure}
@@ -544,7 +540,7 @@ The characteristics producing these costs are those of the consensus mechanism i
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.05\textwidth]{figures/Picture29.png}
+\includegraphics[width=\textwidth]{figures/Picture29.png}
   \caption{Normalised comparison of consensus mechanisms across five dimensions bearing on constrained deployment. Values are relative indicators on a unit interval rather than absolute measurements.}
   \label{fig:led-consensus}
 \end{figure}
@@ -602,7 +598,7 @@ Auditing establishes that the implementation is free of known defect classes. It
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.02\textwidth]{figures/Picture31.png}
+\includegraphics[width=\textwidth]{figures/Picture31.png}
   \caption{System assets, assumed adversarial capabilities, and the protection mechanisms deployed against them.}
   \label{fig:sec-threat}
 \end{figure}
@@ -662,21 +658,21 @@ Delivery of key material is where post-quantum migration is paid for on a constr
     \toprule
     \textbf{Scheme} & \textbf{Raw size (bytes)} & \textbf{Delivered size (bytes)} & \textbf{Reduction} \\
     \midrule
-    Baseline encapsulation & 768 & 768 & None \\
+    Baseline encapsulation & 768 & 768 & 0\% \\
     Generic compression & 768 & 510 & 33.6\% \\
     Reuse-aware delivery & 768 & 410 & 46.6\% \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-Generic compression recovers a third of the payload at 33.6\% and the reuse-aware scheme recovers close to half at 46.6\%, and the difference between the two is where the contribution lies rather than in the magnitude of either. Generic compression treats each ciphertext as an isolated object and must therefore compress the whole of it on every exchange. The reuse-aware scheme exploits a property of the traffic instead: successive ciphertexts to the same peer share most of their content, so the payload is fragmented, unchanged fragments are not retransmitted, and only the delta is compressed. The 46.6\% reduction is measured on the present realisation and differs slightly from the reduction of over 48\% reported for the earlier prototype of this module~\cite{amadi2025quantum}.
+Generic compression recovers a third of the payload at 33.6\% and the reuse-aware scheme recovers close to half at 46.6\%, and the difference between the two is where the contribution lies rather than in the magnitude of either. Generic compression treats each ciphertext as an isolated object and must therefore compress the whole of it on every exchange. The reuse-aware scheme exploits a property of the traffic instead: successive ciphertexts to the same peer share most of their content, so the payload is fragmented, unchanged fragments are not retransmitted, and only the delta is compressed. The delivered sizes are those of the published realisation of this module~\cite{amadi2025quantum}; the reductions differ from the 36.3\% and 48.75\% reported there only because that work expressed them against the 800-byte Kyber512 public key, whereas the quantity actually transmitted, and the reference used here, is the 768-byte ciphertext.
 
-Figure~\ref{fig:pq-delivery} reports the behaviour of that scheme on the Kyber512 ciphertext directly. Panel (a) gives the delivered size across four transmission cases against the 768-byte ciphertext, at 520, 540, 510 and 495 bytes, so between 64\% and 71\% of the original travels in any case and the remainder is suppressed as unchanged. Panel (b) gives the premise on which that rests. Of the sixty-four fragments into which the ciphertext is partitioned, 51 were unchanged between transmissions and 13 changed, so four fifths of the payload was already held by the receiver and did not need to be sent again. The mechanism is therefore not compression in the ordinary sense but suppression of retransmission, and its effectiveness is bounded by how stable the ciphertext is between sessions rather than by how compressible it is in isolation. That stability also explains the spread across the four cases, since the delivered size varies with how many fragments happen to change rather than with the compressibility of the payload, and the scheme retains its efficiency under mutation as the number of modified bytes rises from sixty to a hundred and twenty.
+Figure~\ref{fig:pq-delivery} shows where the difference between the two schemes comes from. Panel (a) gives the size achieved by compressing the Kyber512 ciphertext across four transmission cases, at 520, 540, 510 and 495 bytes, so generic compression alone delivers between 64\% and 71\% of the original in every case, consistent with the 510-byte average of Table~\ref{tab:pq-compression}. Panel (b) gives the property the reuse-aware scheme exploits. Of the sixty-four fragments into which the ciphertext is partitioned, 51 were unchanged between transmissions and 13 changed, so most of the payload was already held by the receiver. Suppressing the retransmission of those fragments, and compressing only what changed, is what takes the delivered size from the 495 to 540 bytes of compression alone down to 410 bytes. The effectiveness of the scheme is therefore bounded by how stable the ciphertext is between sessions rather than by how compressible it is in isolation, and it retains its efficiency under mutation as the number of modified bytes rises from sixty to a hundred and twenty.
 
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.05\textwidth]{figures/Picture34.png}
+\includegraphics[width=\textwidth]{figures/Picture34.png}
   \caption{Delivered ciphertext size across simulation cases (a) and fragment stability between successive transmissions (b).}
   \label{fig:pq-delivery}
 \end{figure}
@@ -686,7 +682,7 @@ The effect on the exchange itself is reported in Figure~\ref{fig:pq-latency}, an
 
 \begin{figure}[tb]
   \centering
-\includegraphics[width=1.02\textwidth]{figures/Picture32.png}
+\includegraphics[width=\textwidth]{figures/Picture32.png}
   \caption{Key exchange latency (a) and processor utilisation (b) under three delivery schemes, with the uncompressed baseline marked.}
   \label{fig:pq-latency}
 \end{figure}
@@ -696,7 +692,7 @@ Generic compression buys latency by spending processor time, reducing the exchan
 The cost of the individual primitives completes the picture, and Figure~\ref{fig:pq-operations} reports them separated by how often the architecture invokes each.
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1.05\textwidth]{figures/Picture33.png}
+  \includegraphics[width=\textwidth]{figures/Picture33.png}
   \caption{Measured cost of quantum-resilient operations on edge-class hardware, separated by enrolment and recurring use, against the behavioural inference time.}
   \label{fig:pq-operations}
 \end{figure}
@@ -705,7 +701,7 @@ Enrolment operations are paid once and are irrelevant to steady-state cost, so t
 Selection of the primitive family followed from the same constraint rather than from a security ranking. Code-based constructions offer strong security with public keys too large for embedded nodes. Multivariate schemes have been weakened by structural attacks. Hash-based signatures are robust but impose signature sizes a low-rate link cannot absorb. Isogeny-based schemes are broken. Lattice constructions were adopted because they combine compact key material with speed adequate for constrained deployment, which is a suitability argument and is presented as one.
 
 Two constraints bound the scope of these measurements. The compression and latency figures were obtained on a workstation-class bench, with microbenchmarks on a single-board computer, and therefore characterise the primitives rather than the microcontroller-class parts at the lower end of the device spectrum, on which the same operations would be slower in proportion to clock. Separately, the ledger bridge binding revocation to the anchoring stratum was specified but not implemented in the identity work, so the evidence reported here covers derivation, delivery, and decoding alone. The anchoring path on which those credentials depend is evidenced separately on the two ledger instantiations, and it is the binding of the two that the architecture contributes rather than either in isolation.
-Post-quantum identity is therefore affordable on the hardware the architecture targets. Roughly a third of the ciphertext is suppressed on a typical exchange because the receiver already holds it, the exchange completes in 12.6~ms at lower processor cost than either alternative, and derivation supplies an identifier that is unenumerable when published and bound to behaviour when evaluated.
+Post-quantum identity is therefore affordable on the hardware the architecture targets. Close to half of the ciphertext is suppressed under reuse-aware delivery, 410 of 768 bytes being sent, because the receiver already holds most of it; the exchange completes in 12.6~ms at lower processor cost than either alternative, and derivation supplies an identifier that is unenumerable when published and bound to behaviour when evaluated.
 
 
 \subsection{Responsive Trust Decay and Credential Isolation}
@@ -759,7 +755,7 @@ Reliability of the mechanism under load is reported in Figure~\ref{fig:iso-scale
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1.02\textwidth]{figures/Picture36.png}
+  \includegraphics[width=\textwidth]{figures/Picture36.png}
   \caption{Proportion of detected anomalies resulting in a completed withdrawal, across device populations (a) and placement strategies (b).}
   \label{fig:iso-scale}
 \end{figure}
@@ -826,7 +822,7 @@ The values in Table~\ref{tab:sub-properties} summarise the properties measured i
     Commitment finality & 0.11~s, final on commit & Final on commit, confirmation depth on the public side only \\
     Detection accuracy & 97.70\% and 96.84\% & 97.40\% \\
     Anchoring cost model & Fee-free throughout & Priced per commitment and per withdrawal \\
-    Throughput under load & Sustained across the evaluated workload & 94 transactions per second, against 80 single-chain \\
+    Throughput under load & Sustained across the evaluated workload & 94 tx/s on Fabric with anchoring active, against 80 tx/s Fabric-only (relay experiment); 840 to 940 tx/s under the scaling workload \\
     Withdrawal confirmation & Committed on the permissioned layer & 1.8 $\pm$ 0.2~s to ledger confirmation \\
     Boundary content & Digests only & Digests only \\
     \bottomrule
@@ -834,7 +830,7 @@ The values in Table~\ref{tab:sub-properties} summarise the properties measured i
 \end{table}
 The results in Table~\ref{tab:sub-properties} affirm that the properties claimed for the partition hold on both realisations. Commitment is final on commit in each, with confirmation depth arising only where the public substrate requires it. Detection accuracy spans 96.84\% to 97.70\%, a range of 0.86 percentage points across three datasets and two training regimes. Withdrawal reaches ledger confirmation in 1.8~s with a spread of 0.2~s, and the boundary carries digests alone in both cases.
 
-Two results follow from the assignment of roles. Public-chain expenditure on the second realisation splits as the cost relation predicts, at 4.20 per epoch commitment against 3.50 per published withdrawal. Adding the anchoring layer raised permissioned throughput from 80 to 94 transactions per second, an improvement of 17.5\%, since anchoring discharges retention away from the fast layer.
+Two results follow from the assignment of roles. Public-chain expenditure on the second realisation splits as the cost relation of Equation~\eqref{eq:anchor-cost} predicts, at 4.20~USD per epoch commitment against 3.50~USD per published withdrawal, assuming a gas price of 20~gwei and an ether price of 3{,}500~USD at May 2025 rates~\cite{amadi2026symmetric}. In the relay experiment, adding the anchoring layer raised Fabric throughput from 80 to 94 transactions per second, an improvement of 17.5\%, since anchoring discharges retention away from the fast layer; the 840 to 940 transactions per second of Table~\ref{tab:sota-robustness} were measured separately under the scaling workload.
 The partition is therefore specifiable independently of consensus mechanism, holds under a change from fee-free to priced anchoring, is indifferent to federated or centralised training, and is satisfiable on a production enterprise stack as readily as on a purpose-built lightweight ledger. 
 
 \section{Performance Evaluation with State-of-the-Art Approaches}
@@ -863,19 +859,21 @@ The results in Table~\ref{tab:sota-detection} summarise the detection performanc
     \textbf{Reference} & \textbf{Year} & \textbf{AI model} & \textbf{Target system} & \textbf{$A_{cc}$ (\%)} & \textbf{$R_c^{+}$ (\%)} \\
     \midrule
     \cite{Anitha2}     & 2024 & Capsule autoencoder & IIoT & 99.97 & 99.88 \\
-    \cite{Metaverse}   & 2024 & CNN and MLP & Metaverse & 99.28 & None \\
+    \cite{Metaverse}   & 2024 & CNN and MLP & Metaverse & 99.28 & n/r \\
     \cite{bfls}        & 2023 & CNN & General IoT & 98.92 & 98.90 \\
     \cite{FLBC-IDS}    & 2024 & EfficientNet and CNN & General IoT & 98.89 & 98.04 \\
-    \cite{enhanced}    & 2024 & Generative adversarial & IIoT & None & 98.99 \\
+    \cite{enhanced}    & 2024 & Generative adversarial & IIoT & n/r & 98.99 \\
     \cite{vehicula}    & 2021 & MLP & Vehicular IoT & 94.00 & 95.00 \\
-    \cite{hbf}         & 2022 & Deep feed forward & General IoT & 90.46 & None \\
-    \cite{BlockHunter} & 2022 & Clustering ensemble & IIoT & None & None \\
+    \cite{hbf}         & 2022 & Deep feed forward & General IoT & 90.46 & n/r \\
+    \cite{BlockHunter} & 2022 & Clustering ensemble & IIoT & n/r & n/r \\
     \midrule
-    Proposed & 2024 & CNN and LSTM & IIoT & 97.70 & 97.70 \\
+    Proposed (STRATA) & 2026 & CNN and LSTM & IIoT & 97.70 & 97.70 \\
     \bottomrule
   \end{tabularx}
+  \vspace{2pt}
+  \parbox{\linewidth}{\footnotesize n/r: not reported by the cited work.}
 \end{table}
-The data indicates that the proposed architecture achieves an accuracy of 97.70\% and a recall of 97.70\%, which is only slightly lower than the 99.97\% reported by the capsule autoencoder and the 99.28\% reported by the metaverse-targeted approach. The margin against the strongest entry is 2.27 percentage points. That margin is a direct consequence of model size: the capsule autoencoder carries 1.2 million parameters against the 41{,}762 of the proposed module and requires 1.8~MB of memory against 0.17~MB, so the accuracy it attains is available only at a footprint exceeding the budget of a microcontroller-class industrial node. Nevertheless, the proposed architecture exceeds five of the eight approaches in accuracy, including two further entries targeting industrial deployment, and is the only entry reporting identical accuracy and recall, which indicates that neither error type is being traded against the other.
+The data indicate that the proposed architecture achieves an accuracy of 97.70\% and a recall of 97.70\%, which is only slightly lower than the 99.97\% reported by the capsule autoencoder and the 99.28\% reported by the metaverse-targeted approach. The margin against the strongest entry is 2.27 percentage points. That margin is a direct consequence of model size: the capsule autoencoder carries 1.2 million parameters against the 41{,}762 of the proposed module and requires 1.8~MB of memory against 0.17~MB, so the accuracy it attains is available only at a footprint exceeding the budget of a microcontroller-class industrial node. Nevertheless, the proposed architecture exceeds five of the eight approaches in accuracy, including two further entries targeting industrial deployment, and is the only entry reporting identical accuracy and recall, which indicates that neither error type is being traded against the other.
  
 Secondly, in terms of balance between the two error types, the proposed architecture returns accuracy and recall at the same value while three of the four approaches reporting both exhibit a divergence between them. Thirdly, in terms of target system, three of the eight approaches address industrial deployment specifically, and of those the proposed architecture is the only one evaluated on industrially generated traffic in addition to a public benchmark.
 
@@ -898,18 +896,20 @@ The results in Table~\ref{tab:sota-blockchain} highlight the blockchain-level ch
     \toprule
     \textbf{Reference} & \textbf{Network type} & \textbf{Gas cost} & \textbf{Security audit} & \textbf{Lightweight nodes} \\
     \midrule
-    \cite{Anitha2}     & Not stated & None & None & None \\
+    \cite{Anitha2}     & Not stated & n/r & n/r & n/r \\
     \cite{Metaverse}   & Public & 63{,}007 & No & No \\
-    \cite{bfls}        & None & None & None & None \\
-    \cite{FLBC-IDS}    & Permissioned & None & No & No \\
-    \cite{enhanced}    & Permissioned & None & None & None \\
-    \cite{vehicula}    & Public & None & None & None \\
-    \cite{hbf}         & Permissioned & None & None & None \\
-    \cite{BlockHunter} & Public & None & None & None \\
+    \cite{bfls}        & n/r & n/r & n/r & n/r \\
+    \cite{FLBC-IDS}    & Permissioned & n/r & No & No \\
+    \cite{enhanced}    & Permissioned & n/r & n/r & n/r \\
+    \cite{vehicula}    & Public & n/r & n/r & n/r \\
+    \cite{hbf}         & Permissioned & n/r & n/r & n/r \\
+    \cite{BlockHunter} & Public & n/r & n/r & n/r \\
     \midrule
-    Proposed & Public & 65{,}618 & 98\% & Yes \\
+    Proposed (STRATA) & Hybrid & 65{,}618 & 98\% & Yes \\
     \bottomrule
   \end{tabularx}
+  \vspace{2pt}
+  \parbox{\linewidth}{\footnotesize n/r: not reported by the cited work.}
 \end{table}
 The proposed architecture consumes 65{,}618 gas for model commitment, which is only slightly higher than the 63{,}007 reported by the single approach that quantifies transaction cost. Nevertheless, that approach is the only one of eight to report any blockchain-level cost at all, none of the eight reports a contract security assessment, and none supports constrained nodes. All eight employ a distributed ledger and seven leave its cost unquantified, so the practical viability of those deployments remains undetermined regardless of the detection accuracy reported.
 The proposed architecture reports 65{,}618 gas for commitment, a contract assessment of 98\% across six vulnerability classes, and a device profile of 41{,}762 parameters at 0.17~MB with an inference latency of 3.1~ms, and is accordingly the only entry in the comparison characterised across the artificial-intelligence layer, the blockchain layer, and the device budget simultaneously.
@@ -950,7 +950,7 @@ The results in Table~\ref{tab:sota-related} highlight the capability coverage of
     \cite{aslam}      & Single with PQC & $\times$ & $\times$ & \checkmark & \checkmark & Partial, consensus and cryptography \\
     \cite{venkatesh}  & Single with QC & $\times$ & $\times$ & \checkmark & $\times$ & Partial, lightweight claims \\
     \midrule
-    Proposed & Hybrid & \checkmark & \checkmark & \checkmark & \checkmark & Full, learning, cryptography, ledger and robustness \\
+    Proposed (STRATA) & Hybrid & \checkmark & \checkmark & \checkmark & \checkmark & Full, learning, cryptography, ledger and robustness \\
     \bottomrule
   \end{tabularx}
   \vspace{2pt}
@@ -1004,6 +1004,45 @@ This combined approach ensures that an industrial deployment is capable of detec
 
 By realising this approach on two ledger substrates sharing no consensus mechanism, no execution model, and no cost model, the generality of trust-partitioning is established beyond a single implementation. Security functions are placed by cost profile rather than by uniform application, the resulting design operates within the resource limits of industrial edge hardware, and its organising principle transfers to substrates chosen for their difference.
 
+\subsection{Answers to the Research Questions}
+\label{sec:eval-rq}
+
+Table~\ref{tab:rq-answers} draws the results of this chapter together against the five research questions posed in Section~\ref{sec:rq}, stating for each the principal evidence, the section in which it is reported, and the extent to which the question is answered. Where an answer holds only within a stated scope, the scope is recorded rather than left implicit.
+
+\begin{table}[htbp]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.3}
+  \caption{Answers to the research questions, with the principal evidence and its location in this chapter.}
+  \label{tab:rq-answers}
+  \begin{tabularx}{\textwidth}{@{}
+      >{\raggedright\arraybackslash}p{0.9cm}
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}p{2.0cm}
+      >{\raggedright\arraybackslash}p{3.0cm}@{}}
+    \toprule
+    \textbf{RQ} & \textbf{Principal evidence} & \textbf{Reported in} & \textbf{Answer} \\
+    \midrule
+    RQ1 & Permissioned finalisation in 0.11~s with no confirmation depth; ledger metadata at 0.13\% of the learning uplink; public-layer cost governed by the revocation rate rather than traffic volume; anchoring raises Fabric throughput from 80 to 94~tx/s
+        & Sections~\ref{sec:eval-resource}, \ref{sec:eval-ledger}, \ref{sec:eval-substrate}
+        & Yes: partitioning delivers verifiable security within device and ledger budgets \\
+    RQ2 & 41{,}762 parameters at 0.17~MB (peak below 0.6~MB), 3.1~ms inference, 6 to 9\% processor occupancy; accuracy 96.84 to 97.70\% across three datasets; federation costs at most 0.003 in F1
+        & Sections~\ref{sec:eval-evidence} to~\ref{sec:eval-resource}
+        & Yes, on edge-class hardware; energy figure estimated rather than instrumented \\
+    RQ3 & Kyber512 ciphertext reduced from 768 to 410~bytes (46.6\%); key exchange 30.7\% faster at lower processor load; identifiers of 128 bits and above
+        & Section~\ref{sec:eval-identity}
+        & Yes, on a workstation bench with single-board microbenchmarks; ledger bridge specified but not implemented \\
+    RQ4 & The same partition realised on PureChain NSL and on Fabric with Ethereum, sharing no consensus, execution, or cost model; boundary content limited to digests in both
+        & Section~\ref{sec:eval-substrate}
+        & Yes, on two substrate pairs; a general characterisation remains open \\
+    RQ5 & Two independent withdrawal triggers; confirmation in 1.8~$\pm$~0.2~s; success of 95.2\% or more up to 1{,}000 devices; detection unchanged during isolation (97.40\%, false positive rate 1.90\%); contract assessment of 98\%
+        & Sections~\ref{sec:eval-security}, \ref{sec:eval-isolation}, \ref{sec:sota-robustness}
+        & Yes, within the evaluated threat model; inference attacks on model updates not mitigated \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \subsection{Resolution of the Security, Scalability, and Speed Trilemma}
 \label{sec:eval-trilemma}
 The security, scalability, and speed trilemma presented at the outset of this thesis holds within a single distributed ledger, where optimising any two dimensions is obtained at the expense of the third. The values in Table~\ref{tab:trilemma-close} summarise the evidence obtained on each dimension and the layer supplying it.
@@ -1033,7 +1072,7 @@ The security, scalability, and speed trilemma presented at the outset of this th
       & Validator set restricted to identified participants \\
     Scalability
       & Separation of the two strata
-      & Throughput of 840 to 940 transactions per second across 100 to 1000 devices, a reduction of 7.7\% across a tenfold population increase; 94 against 80 transactions per second relative to a single-chain baseline
+      & Throughput of 840 to 940 transactions per second across 100 to 1000 devices, a reduction of 7.7\% across a tenfold population increase under the scaling workload; in the relay experiment, 94 against 80 transactions per second relative to a Fabric-only baseline
       & Relay latency of 2.1~s between substrates under stable conditions \\
     \bottomrule
   \end{tabularx}

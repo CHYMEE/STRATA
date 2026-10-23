@@ -147,6 +147,7 @@ The strata and planes are specified individually in the sections that follow, be
     $s_i(t)$ & Accumulated device trust score maintained by Plane~A & Eq.~\eqref{eq:trust-decay} \\
     $\beta$ & Retention factor of the trust-decay law & Eq.~\eqref{eq:trust-decay} \\
     $\tau$ & Revocation threshold applied to $s_i(t)$ & Section~\ref{sec:plane-a} \\
+    $S_i(t)$, $\mu_S$ & Anomaly streak counter; streak limit & Eq.~\eqref{eq:revoke-condition} \\
     $\omega_i$, $\theta$ & Validator authority weight; weighted acceptance threshold & Eq.~\eqref{eq:poa2-accept} \\
     $\rho_i(t)$, $\gamma$ & Validator reliability; reliability decay factor & Eq.~\eqref{eq:poa2-reliability} \\
     $N$, $f$ & Active validator count; tolerated faulty validators & Eq.~\eqref{eq:poa2-fault} \\
@@ -721,6 +722,13 @@ s_i(t+1) \;=\; \beta \, s_i(t) \;+\; (1-\beta) \, q_i(t) ,
 \end{equation}
 where $s_i(t) \in [0,1]$ is the trust score of device $i$ at window $t$, $q_i(t) \in [0,1]$ is the behavioural evidence produced for that window by the trust-scoring stratum, and $\beta \in (0,1)$ is the retention factor governing how strongly past behaviour resists present evidence. A high retention factor makes the score slow to fall, which suppresses reaction to transient noise at the cost of delaying response to a genuine compromise; a low factor inverts both properties. Withdrawal follows once the score falls to or below the revocation threshold $\tau$, at which point the credential is terminally invalid. Because the update is a convex combination, the score cannot leave the unit interval, and a device supplying uniformly clean evidence converges upward toward unity rather than accumulating unbounded credit for good behaviour.
 
+A second, independent trigger bounds the response to abrupt compromise. A streak counter $S_i(t)$ records the number of consecutive windows in which the behavioural score $q_i(t)$ has fallen below the flag threshold $\delta$, and is reset by any window of normal behaviour. Withdrawal therefore follows when either condition is met,
+\begin{equation}
+\label{eq:revoke-condition}
+\mathrm{Revoke}(\mathrm{id}_i) \iff s_i(t) \leq \tau \;\; \text{or} \;\; S_i(t) > \mu_S ,
+\end{equation}
+where $\mu_S$ is the streak limit. The threshold condition catches gradual degradation accumulated over many windows, while the streak condition catches a device that fails every window in succession before its score has had time to fall. The trust law may equally be realised in an additive form, in which each window credits or penalises the score by a fixed amount; that form shares the threshold semantics and the terminal withdrawal of Equation~\eqref{eq:trust-decay} but declines linearly rather than geometrically, and it is the form exercised in the isolation experiments of Chapter~\ref{Chapter_5}.
+
 The delay this introduces between compromise and withdrawal is bounded, and the bound is what an operator needs in order to choose the retention factor.
 
 \begin{proposition}
@@ -759,7 +767,8 @@ Algorithm~\ref{alg:identity-lifecycle} sets out the full credential lifecycle, f
 \For{each observation window $t$}
   \State $q_i(t) \gets$ behavioural evidence from the trust-scoring stratum
   \State $s_i \gets \beta \, s_i + (1-\beta)\, q_i(t)$
-  \If{$s_i \leq \tau$}
+  \State update streak counter $S_i$ \Comment{reset on a normal window}
+  \If{$s_i \leq \tau$ \textbf{or} $S_i > \mu_S$}
     \State state $\gets$ Flagged; assemble evidence bundle $\pi_i$
     \State submit revocation for finalisation at the consensus stratum
     \If{revocation is committed}
