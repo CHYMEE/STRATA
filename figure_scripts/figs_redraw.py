@@ -241,7 +241,7 @@ def fig_train_flow():
     arrow(ax, (cx, 8.2), (cx, 8.01))
     diamond(ax, cx, 6.95, 2.1, 0.62, "#f9a825", r"Rounds remaining ($t<R$)?", fs=7.0)
     arrow(ax, (cx, 7.53), (cx, 7.28))
-    step(6.05, r"Each client $i$: LocalTrain$(w^{(t)}, E)$ on private telemetry", C1, w=3.9)
+    step(6.05, r"Each client $i$: LocalTrain$(w^{(t)}, E_{loc})$ on private telemetry", C1, w=3.9)
     arrow(ax, (cx, 6.63), (cx, 6.5)); label(ax, cx + 0.2, 6.57, "Yes", fs=6.8, color="#2e7d32", ha="left")
     step(5.45, "Send update with round ID and timestamp", C1, w=3.9)
     arrow(ax, (cx, 6.03), (cx, 5.9))
@@ -279,6 +279,50 @@ def fig_train_flow():
     arrow(ax, (5.4, 0.8), (cx + 0.9, 0.48), color=SUB)
     save(fig, "Fig4_train_flow.png")
 
+# --------------------------------------------------------------------------
+# Fig2_trust_flow.png: detection to enforcement (Chapter 2)
+# --------------------------------------------------------------------------
+def fig_trust_flow():
+    W, H = 7.5, 3.9
+    fig = plt.figure(figsize=(W, H), dpi=400)
+    ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
+    RED, OK = "#c62828", "#2e7d32"
+    y0, bh = 2.12, 1.32
+    box3d(ax, 0.10, y0, 1.30, bh, "#1565c0", "1. Engine output",
+          ["Class probabilities", r"$P_{normal}$", r"$P_{anomaly,k}$"], fs=7.2, lfs=6.8)
+    box3d(ax, 1.70, y0, 1.20, bh, "#00838f", "2. Trust score",
+          ["Reduce to a", "single score", r"score $\in [0,1]$"], fs=7.2, lfs=6.8)
+    arrow(ax, (1.49, y0 + bh / 2 - 0.05), (1.68, y0 + bh / 2 - 0.05), lw=2.0)
+    dx, dy = 3.80, y0 + bh / 2
+    arrow(ax, (2.99, dy - 0.05), (3.16, dy - 0.03), lw=2.0)
+    diamond(ax, dx, dy, 1.25, 1.0, "#f9a825", "3. Threshold\n" + r"score $\geq \delta$ ?", fs=7.2)
+    # trusted path
+    box3d(ax, 5.30, 2.42, 1.75, 1.02, OK, "4A. Trust maintained",
+          ["Trust sufficient;", "interactions proceed"], fs=7.0, lfs=6.8, hh=0.26)
+    arrow(ax, (dx + 0.45, dy + 0.2), (5.28, 2.93), color=OK, lw=1.8)
+    label(ax, 4.75, 3.03, "Yes", fs=7.4, color=OK)
+    # anomalous path
+    bw, by, bhh = 1.55, 0.62, 1.02
+    xs = [0.30, 2.10, 3.90, 5.70]
+    stages = [("4B. Flagged", RED, [r"score $< \delta$;", "flag device"]),
+              ("5. Isolation", "#6a1b9a", ["Restrict or", "quarantine"]),
+              ("6. Ledger record", "#ef6c00", ["Revocation written", "as immutable record"]),
+              ("7. Propagation", "#00695c", ["Broadcast event;", "nodes update trust"])]
+    for x, (h, c, ln) in zip(xs, stages):
+        box3d(ax, x, by, bw, bhh, c, h, ln, fs=7.0, lfs=6.8, hh=0.26)
+    for a, b in zip(xs[:-1], xs[1:]):
+        arrow(ax, (a + bw + 0.08, by + bhh / 2 - 0.08), (b - 0.02, by + bhh / 2 - 0.08), color=RED, lw=1.8, ls="--")
+    ax.plot([dx, dx, xs[0] + bw / 2], [dy - 0.5, 1.92, 1.92], color=RED, lw=1.8, ls="--", zorder=2)
+    arrow(ax, (xs[0] + bw / 2, 1.93), (xs[0] + bw / 2, by + bhh + 0.08), color=RED, lw=1.8, ls="--")
+    label(ax, dx + 0.12, 1.98, "No", fs=7.4, color=RED, ha="left")
+    # legend
+    arrow(ax, (0.30, 0.25), (0.75, 0.25), color=OK, lw=1.8)
+    label(ax, 0.82, 0.25, r"Trusted path (score $\geq \delta$): interactions continue", fs=6.9, ha="left")
+    arrow(ax, (4.05, 0.25), (4.50, 0.25), color=RED, lw=1.8, ls="--")
+    label(ax, 4.57, 0.25, r"Anomalous path (score $< \delta$): flag, isolate, revoke", fs=6.9, ha="left")
+    save(fig, "Fig2_trust_flow.png")
+
+fig_trust_flow()
 fig_cnn_lstm()
 fig_review_stats()
 fig_engine()

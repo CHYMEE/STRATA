@@ -614,9 +614,9 @@ sequence, illustrated in Fig.~\ref{fig:trust-flow}. The behavioural engine
 produces, for the device or node whose traffic was classified, a set of class
 probabilities across normal and anomalous categories. These are reduced to a
 single trust score in the range $[0,1]$, which is then compared against a
-predefined threshold $\tau$. A device whose score satisfies
-$\text{score} \geq \tau$ is treated as trustworthy and its interactions proceed;
-a device whose score falls below the threshold, $\text{score} < \tau$, is
+predefined threshold $\delta$. A device whose score satisfies
+$\text{score} \geq \delta$ is treated as trustworthy and its interactions proceed;
+a device whose score falls below the threshold, $\text{score} < \delta$, is
 flagged as anomalous. Threshold-based conversion of a continuous anomaly signal
 into a discrete security decision of this kind is a common and well-studied
 mechanism in network anomaly detection~\cite{komadina2024comparing}, and it is
@@ -641,9 +641,9 @@ decision. Table~\ref{tab:trust-stages} summarises the role of each stage.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{figures/Picture62.PNG}
+    \includegraphics[width=\textwidth]{figures/Fig2_trust_flow.png}
     \caption[From detection to enforcement: trust scoring and revocation]{From detection to enforcement. The behavioural engine's class
-    probabilities yield a trust score, which is compared against the threshold $\tau$. A device with score at or above $\tau$ retains trust and its interactions proceed; a device below $\tau$ is flagged, isolated, has its revocation recorded as an immutable ledger record, and has that revocation propagated to the other nodes.}
+    probabilities yield a trust score, which is compared against the threshold $\delta$. A device with score at or above $\delta$ retains trust and its interactions proceed; a device below $\delta$ is flagged, isolated, has its revocation recorded as an immutable ledger record, and has that revocation propagated to the other nodes.}
     \label{fig:trust-flow}
 \end{figure}
 
@@ -659,9 +659,9 @@ decision. Table~\ref{tab:trust-stages} summarises the role of each stage.
 \midrule
 Behavioural engine output & Produces class probabilities across normal and anomalous categories for the classified node. \\
 Trust score               & Reduces the class probabilities to a single trust score in $[0,1]$. \\
-Threshold comparison      & Compares the score against the threshold $\tau$ to yield a trust or anomaly verdict. \\
-Trust maintained          & For a score at or above $\tau$, the device stays trusted and its interactions proceed. \\
-Flagging and isolation    & For a score below $\tau$, the device is flagged anomalous and moved through an isolation lifecycle. \\
+Threshold comparison      & Compares the score against the threshold $\delta$ to yield a trust or anomaly verdict. \\
+Trust maintained          & For a score at or above $\delta$, the device stays trusted and its interactions proceed. \\
+Flagging and isolation    & For a score below $\delta$, the device is flagged anomalous and moved through an isolation lifecycle. \\
 Revocation                & Writes the revocation as an immutable ledger record, making it tamper-evident. \\
 Propagation               & Broadcasts the revocation so other nodes update their trust state and the device cannot re-enter elsewhere. \\
 \bottomrule
