@@ -62,7 +62,7 @@ The framework serves a set $\mathcal{D}=\{d_1,\dots,d_n\}$ of resource-constrain
 
 The behavioural trust stratum scores device conduct in real time. A lightweight federated CNN--LSTM intrusion-detection engine evaluates network and metadata behaviour and emits a per-window trust score $q_i \in [0,1]$, committed at device rate on the fast permissioned layer (NSL-L2) so that the verdict is recorded rather than left on the host that computed it. The full detection design is given in Section~\ref{sec:strata-trust}.
 
-The consensus and coordination stratum finalises those commitments. Permissioned finalisation uses the Proof-of-Authority-and-Association protocol with the Smart Auto-Mining Plus mechanism on the coordination layer (NSL-L1), tolerating up to $f=\lfloor (N-1)/2 \rfloor$ faulty or unavailable validators for $N$ authorities. Deterministic finality bounds the latency of a behavioural decision without exposing it publicly.
+The consensus and coordination stratum finalises those commitments. Permissioned finalisation uses the Proof-of-Authority-and-Association protocol on the coordination layer (NSL-L1), with block production paced by the Smart Auto-Mining Plus mechanism, tolerating up to $f=\lfloor (N-1)/2 \rfloor$ faulty or unavailable validators for $N$ authorities. Deterministic finality bounds the latency of a behavioural decision without exposing it publicly.
 
 The public anchoring stratum carries only what external accountability requires. Compact digests of finalised state and revocation proofs cross the trust-partition boundary and are committed to an open layer (Augmented-L1), cross-chain-anchored to a public chain where interoperability demands it. Payloads never cross; only proofs do, which preserves confidentiality while enabling open verification. The anchoring design appears in Section~\ref{sec:strata-anchor}.
 
@@ -216,7 +216,7 @@ Weighting by local sample count reduces the instability that non-identical clien
 \label{alg:strata-train}
 \begin{algorithmic}[1]
 \Require Clients $\{1,\ldots,K\}$, communication rounds $R$,
-local epochs $E$, trust threshold $\delta$
+local epochs $E_{\mathrm{loc}}$, trust threshold $\delta$
 \Ensure Global trust model $\mathbf{w}^{\star}$ and per-device flags
 \State Initialise global model weights $\mathbf{w}^{(0)}$
 \State Register client identities on the fast permissioned layer
@@ -224,7 +224,7 @@ local epochs $E$, trust threshold $\delta$
     \ForAll{registered clients $i \in \{1,\ldots,K\}$ \textbf{in parallel}}
         \State $\mathbf{w}_{i}^{(t)}
         \gets
-        \textsc{LocalTrain}\!\left(\mathbf{w}^{(t)},E\right)$
+        \textsc{LocalTrain}\!\left(\mathbf{w}^{(t)},E_{\mathrm{loc}}\right)$
         using private telemetry
         \State Transmit $\mathbf{w}_{i}^{(t)}$ together with
         round ID and timestamp
@@ -941,7 +941,7 @@ Reproduction of either instantiation requires the substrate configuration, the c
     Aggregator hardware & 251.4~GB RAM, 3.9~TB storage \\
     Constrained device profile & Client-side footprint of 0.17~MB model memory, 3.1~ms inference latency, 0.42~mJ per prediction, 167~kB update payload \\
     Learning framework & Flower 1.9.0, TensorFlow 2.9.0, Anaconda Navigator 2.6.1 \\
-    Behavioural model & One-dimensional CNN-LSTM: 57 input units, 16 convolutional units with ReLU, softmax output over 8 classes \\
+    Behavioural model & Trimmed one-dimensional CNN-LSTM configured as in Table~\ref{tab:strata-hyper}; 57 input features on the internal set, softmax output over 8 classes on CIC-Collections2023 \\
     Federation size & Five clients, aggregated on a single host \\
     Learning rates & 0.001 for client updates, 0.05 for global aggregation \\
     Datasets & CIC-Collections2023 public benchmark; and an internally generated lightweight IIoT dataset of 5{,}000 samples over 57 features, covering normal, denial-of-service, port-scan and brute-force traffic \\

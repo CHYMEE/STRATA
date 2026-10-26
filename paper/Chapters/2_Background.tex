@@ -817,9 +817,10 @@ between the least reliable active and the most reliable standby validator
 triggering replacement~\cite{kim2025proof}. The result is a self-healing
 validator set that tolerates degraded authorities without surrendering the
 deterministic finality that constrained, mission-critical operation requires. A
-companion association management scheme, SAM+, maintains validator membership
-under changing reliability by governing how nodes join, associate, and are
-retired from the active set~\cite{kim2025integrating}.
+companion mechanism, Smart Auto-Mining Plus (SAM+), regulates block production
+by adjusting the mining difficulty to the observed network load, so that the
+fast layer neither idles under light traffic nor saturates its validators during
+bursts of updates~\cite{purechain_wp}.
 
 These mechanisms operate over a layered permissioned ledger whose structure
 separates high-frequency operational commitments from the low-frequency,
