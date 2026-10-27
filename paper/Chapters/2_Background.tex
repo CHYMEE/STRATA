@@ -48,7 +48,7 @@ cryptography underpinning identity and key exchange be resilient against an
 emerging quantum adversary. Fig.~\ref{fig:iiot-evolution} traces this
 progression and situates the present contribution at its endpoint.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/Picture2-evolution.png}
     \caption{Evolution of industrial computing security, from isolated control
@@ -85,7 +85,7 @@ host aggregation, validation, and ledger participation. The distance between the
 two ends of this range is the reason security work must be placed deliberately
 rather than applied uniformly.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -140,7 +140,7 @@ manifestations, following the characterisation used in the behavioural detection
 work of Chapter~\ref{Chapter_4}, and Fig.~\ref{fig:iiot-stack} locates the
 dominant threats at each tier of a deployment.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{Common attack categories and their manifestation in industrial network
 traffic.}
@@ -159,7 +159,7 @@ Botnet / command-and-control & Periodic beaconing, low-entropy commands & Compro
 \end{tabular}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/Picture3_threat.png}
     \caption{Layered view of an industrial IoT deployment and the dominant threat surface at each tier.}
@@ -203,7 +203,7 @@ budget of an industrial device, where a model that cannot run within the device
 envelope, or whose decision cannot be reconstructed, is unsuitable however
 strong its benchmark accuracy.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/Picture7.png}
   \caption{Taxonomy of AI model families for IIoT security, grouped by representational depth and mapped to the security-learning tasks each serves.}
@@ -240,7 +240,7 @@ families reviewed here onto the tasks they serve, and
 Table~\ref{tab:ai-family-comparison} compares them across the dimensions that
 matter for industrial deployment.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -367,7 +367,7 @@ their own overhead~\cite{xu2024applying, zhong2024survey}.
 Table~\ref{tab:task-family-fit} summarises which families best serve each
 security task.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \centering
   \caption{Security-learning tasks and the model families best suited to each.}
   \label{tab:task-family-fit}
@@ -407,7 +407,7 @@ inputs~\cite{gaspar2024explainable, wali2025explainable}. Transparency obtained
 this way is therefore a mitigation, not a substitute for an inherently
 interpretable model.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{figures/Picture8.png}
   \caption[Interpretability against representational capacity for AI model families]{Interpretability against representational capacity for the model families of Section~\ref{sec:ai-models}. Classical families (circles) combine high transparency with moderate capacity and fall within the region of trustworthy, auditable detection on constrained devices; deep families (squares) gain capacity at the cost of transparency and fall outside it.}
@@ -477,7 +477,7 @@ Table~\ref{tab:central-vs-fl} contrasts the two training paradigms across the
 dimensions that matter for constrained industrial deployment, and
 Fig.~\ref{fig:fl-workflow} shows the federated workflow.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{Centralised and federated learning contrasted for distributed
 industrial deployment.}
@@ -498,7 +498,7 @@ Fit for constrained IIoT & Poor                        & Good \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/Picture4.png}
     \caption{Federated learning workflow. Devices train locally on data that
@@ -555,7 +555,7 @@ convolutional-recurrent pairing is the behavioural engine common to the systems
 examined in the later chapters. Fig.~\ref{fig:cnn-lstm} shows the arrangement of
 stages, and Table~\ref{tab:cnn-lstm-stages} summarises the function of each.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figures/Fig2_cnn_lstm_author.png}
     \caption{Hybrid one-dimensional convolutional and recurrent detection engine.
@@ -565,7 +565,7 @@ stages, and Table~\ref{tab:cnn-lstm-stages} summarises the function of each.
     \label{fig:cnn-lstm}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{Function of each stage in the hybrid convolutional-recurrent detection
 engine.}
@@ -639,7 +639,7 @@ comparison, and then to a ledger-recorded and propagated revocation, is the
 mechanism by which learning-based detection becomes an enforceable trust
 decision. Table~\ref{tab:trust-stages} summarises the role of each stage.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figures/Fig2_trust_flow_author.png}
     \caption[From detection to enforcement: trust scoring and revocation]{From detection to enforcement. The behavioural engine's class
@@ -647,7 +647,7 @@ decision. Table~\ref{tab:trust-stages} summarises the role of each stage.
     \label{fig:trust-flow}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{Stages in the trust-scoring and revocation mechanism.}
 \label{tab:trust-stages}
@@ -764,7 +764,7 @@ membership, finality, and fitness for a constrained industrial ledger, and shows
 why the choice narrows toward authority-based consensus once energy cost and
 deterministic finality are treated as hard requirements rather than preferences.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -836,7 +836,7 @@ division of labour explicit: frequent operations are absorbed where they are
 cheap, while the anchor layer is reserved for the few events whose external
 verifiability justifies their cost.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{figures/Picture9.png}
   \caption{Layered structure of a permissioned industrial ledger, separating the fast layer that records high-frequency operational commitments from the layer that anchors low-frequency, high-value events for external verification.}
@@ -877,7 +877,7 @@ that were never designed to interoperate~\cite{hassan2025sok}.
 Table~\ref{tab:ledger-types} contrasts the public, permissioned, and hybrid
 options on the properties that decide where an operation belongs.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -954,7 +954,7 @@ question this section deliberately leaves open. Fig.~\ref{fig:hybrid-pattern}
 shows the pattern in its generic form, with fast permissioned layers feeding
 periodic commitments to a public anchor.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/Picture10.png}
   \caption{Generic hybrid ledger pattern. Fast permissioned layers absorb high-frequency operational activity and periodically commit a compact root to a public anchoring layer, which preserves low-frequency, high-value records for verification by parties outside the consortium.}
@@ -1029,7 +1029,7 @@ fragment multiplies the cost. Reducing what crosses the link, rather than
 accelerating the arithmetic, is accordingly the principal lever for post-quantum
 security on constrained devices~\cite{castiglione2024integrating}.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -1058,7 +1058,7 @@ SLH-DSA-SHA2-128s & Signature          & Hash functions                    & 32 
 \end{tabularx}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/Fig2_pqc_sizes_author.png}
   \caption{Public-key and ciphertext or signature sizes of classical and standardised post-quantum schemes, on a logarithmic scale. Post-quantum artefacts are between one and two orders of magnitude larger than their classical counterparts.}
@@ -1091,7 +1091,7 @@ behavioural evidence of Section~\ref{subsec:bg-trust} acts on a cryptographic
 credential, and the ledger of Section~\ref{sec:blockchain-ledgers} is the means
 by which that withdrawal becomes visible to every party that relies on it.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
