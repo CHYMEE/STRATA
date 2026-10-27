@@ -107,41 +107,59 @@ def fig_landscape():
     plt.close(fig)
 
 # --------------------------------------------------------------- roadmap figure
-def block(ax, x, y, w, h, color, header, lines, tags, d=0.07):
-    hh = 0.30
+# Drawn at the 5.9 in text width in Arial Black, compact, no caption in the image.
+def fit_text(ax, fig, x, y, s, maxw, fs, minfs=6.0, **kw):
+    t = ax.text(x, y, s, fontsize=fs, **kw)
+    r = fig.canvas.get_renderer()
+    while fs > minfs and t.get_window_extent(r).width / fig.dpi > maxw:
+        fs -= 0.1
+        t.set_fontsize(fs)
+    return t
+
+def _block(ax, fig, x, y, w, h, color, header, lines, tags, d=0.05):
+    hh = 0.32
     ax.add_patch(Polygon([(x + w, y), (x + w + d, y + d), (x + w + d, y + h + d), (x + w, y + h)], closed=True,
-                         fc=shade(color, 0.55), ec=shade(color, 0.40), lw=0.8, zorder=2))
+                         fc=shade(color, 0.55), ec=shade(color, 0.40), lw=0.7, zorder=2))
     ax.add_patch(Polygon([(x, y + h), (x + d, y + h + d), (x + w + d, y + h + d), (x + w, y + h)], closed=True,
-                         fc=shade(color, 1.30), ec=shade(color, 0.50), lw=0.8, zorder=2))
-    ax.add_patch(Rectangle((x, y), w, h, fc="white", ec=color, lw=1.8, zorder=3))
-    ax.add_patch(Rectangle((x, y + h - hh), w, hh, fc=color, ec=color, lw=1.8, zorder=4))
-    ax.text(x + w / 2, y + h - hh / 2, header, ha="center", va="center", color="white", fontsize=9.6, fontweight="bold", zorder=5)
-    ty = y + h - hh - 0.19
+                         fc=shade(color, 1.30), ec=shade(color, 0.50), lw=0.7, zorder=2))
+    ax.add_patch(Rectangle((x, y), w, h, fc="white", ec=color, lw=1.6, zorder=3))
+    ax.add_patch(Rectangle((x, y + h - hh), w, hh, fc=color, ec=color, lw=1.6, zorder=4))
+    fit_text(ax, fig, x + w / 2, y + h - hh / 2, header, w - 0.12, 8.8, ha="center", va="center", color="white", zorder=5)
+    ty = y + h - hh - 0.2
     for ln in lines:
-        ax.text(x + 0.10, ty, "■", ha="left", va="center", color=color, fontsize=5.5, zorder=5)
-        ax.text(x + 0.24, ty, ln, ha="left", va="center", color="#16202b", fontsize=8.4, fontweight="bold", zorder=5)
-        ty -= 0.215
+        ax.add_patch(Rectangle((x + 0.09, ty - 0.035), 0.07, 0.07, fc=color, ec=color, zorder=5))
+        fit_text(ax, fig, x + 0.22, ty, ln, w - 0.3, 7.6, ha="left", va="center", color="#151515", zorder=5)
+        ty -= 0.235
     tx = x + 0.09
-    for t, c in tags:
-        tw = 0.062 * len(t) + 0.12
-        ax.add_patch(Rectangle((tx, y + 0.07), tw, 0.20, fc=c, ec=shade(c, 0.6), lw=0.8, zorder=5))
-        ax.text(tx + tw / 2, y + 0.17, t, ha="center", va="center", color="white", fontsize=6.9, fontweight="bold", zorder=6)
+    for t in tags:
+        tw = 0.68
+        ax.add_patch(Rectangle((tx, y + 0.07), tw, 0.21, fc="#151515", ec="#151515", lw=0.8, zorder=5))
+        ax.text(tx + tw / 2, y + 0.175, t, ha="center", va="center", color="white", fontsize=7.0, zorder=6)
         tx += tw + 0.06
 
 def arrow(ax, p, q):
-    ax.add_patch(FancyArrowPatch(p, q, arrowstyle="-|>,head_length=0.5,head_width=0.28", mutation_scale=12,
-                                 lw=2.0, color="#2b3a4a", zorder=1))
+    ax.add_patch(FancyArrowPatch(p, q, arrowstyle="-|>,head_length=0.55,head_width=0.32", mutation_scale=13,
+                                 lw=2.8, color="#262626", zorder=1, shrinkA=0, shrinkB=0))
 
 def fig_roadmap():
-    W, H = 7.5, 6.55
+    from matplotlib import font_manager as fm
+    fm.fontManager.addfont("C:/Windows/Fonts/ariblk.ttf")
+    with plt.rc_context({"font.family": ["Arial", "DejaVu Sans"], "font.weight": 900}):
+        _roadmap()
+
+def _roadmap():
+    W, H = 5.9, 4.98
     fig = plt.figure(figsize=(W, H), dpi=400)
     ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
-    RQ = "#6a1b9a"
-    w, h = 3.25, 1.55
-    xl, xr = 0.12, 4.02
-    y1, y2, y3 = 4.72, 2.62, 0.52
-    C = ["#1565c0", "#00838f", "#2e7d32", "#ef6c00", "#c62828", "#4527a0"]
+    w, h = 2.72, 1.43
+    xl, xr = 0.05, 3.08
+    y1, y2, y3 = 3.47, 1.76, 0.05
+    C = ["#2c3e50", "#1b7f79", "#5d7f2f", "#b5651d", "#9e2a2b", "#3c3c6e"]
 
+    def block(ax_, x, y, w_, h_, color, header, lines, tags):
+        _block(ax_, fig, x, y, w_, h_, color, header, lines, [t for t, _ in tags])
+
+    RQ = None
     block(ax, xl, y1, w, h, C[0], "Chapter 1: Introduction",
           ["Constrained IIoT and the trilemma", "Quantum threat to device identity", "Research questions, contributions"],
           [("RQ1–RQ5", RQ)])
@@ -161,14 +179,12 @@ def fig_roadmap():
           ["Answers to RQ1–RQ5", "Practical concerns", "Future research directions"],
           [("RQ1–RQ5", RQ)])
 
-    arrow(ax, (xl + w + 0.11, y1 + h / 2 - 0.1), (xr - 0.04, y1 + h / 2 - 0.1))
-    arrow(ax, (xr + w / 2, y1 - 0.04), (xr + w / 2, y2 + h + 0.11))
-    arrow(ax, (xr - 0.04, y2 + h / 2 - 0.1), (xl + w + 0.11, y2 + h / 2 - 0.1))
-    arrow(ax, (xl + w / 2, y2 - 0.04), (xl + w / 2, y3 + h + 0.11))
-    arrow(ax, (xl + w + 0.11, y3 + h / 2 - 0.1), (xr - 0.04, y3 + h / 2 - 0.1))
+    arrow(ax, (xl + w + 0.07, y1 + h / 2), (xr - 0.02, y1 + h / 2))
+    arrow(ax, (xr + w / 2, y1 - 0.01), (xr + w / 2, y2 + h + 0.07))
+    arrow(ax, (xr - 0.02, y2 + h / 2), (xl + w + 0.07, y2 + h / 2))
+    arrow(ax, (xl + w / 2, y2 - 0.01), (xl + w / 2, y3 + h + 0.07))
+    arrow(ax, (xl + w + 0.07, y3 + h / 2), (xr - 0.02, y3 + h / 2))
 
-    ax.text(W / 2, 0.2, "■ Purple tags: research questions addressed",
-            ha="center", va="center", fontsize=7.4, fontweight="bold", color="#37474f")
     fig.savefig(os.path.join(OUT, "Fig1_3_roadmap.png"), dpi=400, facecolor="white")
     plt.close(fig)
 
