@@ -179,7 +179,7 @@ The engine pairs a one-dimensional convolutional front end with a recurrent stag
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{figures/Fig4_engine.png}
+  \includegraphics[width=\textwidth]{figures/Fig4_engine_author.png}
   \caption{Behavioural trust-scoring engine of Stratum~1. Device telemetry over a window $T$ passes through a trimmed one-dimensional CNN and pooling stage for feature compression, an LSTM stage for temporal dependence, and a softmax that yields the per-device trust score $q_i\in[0,1]$. The threshold test $q_i<\delta$ then either commits the score as a validated trust score to the fast permissioned layer or raises a revocation event to the identity plane.}
   \label{fig:strata-cnnlstm}
 \end{figure}
