@@ -4,21 +4,22 @@
 \LARGE
 STRATA: Secure Trust-partitioned Anchoring for Tiered constrained-IIoT Architecture
 
-\vspace{1.5cm}
+\vspace{0.5cm}
 \LARGE
 Chimeremma Sandra Amadi
 
-\vspace{1.5cm}
+\vspace{0.5cm}
 \Large
 Department of IT Convergence Engineering,\\
 Graduate School\\
 Kumoh National Institute of Technology
 
-\vspace{2cm}
+\vspace{0.5cm}
 \LARGE
 Abstract
 \end{center}
 \large
+\setstretch{1.15}
 
 The Industrial Internet of Things (IIoT) connects sensors, controllers, and edge nodes that underpin manufacturing, energy, water, and transportation infrastructure. Securing these deployments is difficult because the devices that carry the security burden operate within tight budgets of computation, memory, and energy, while distributed-ledger security is bound by the trilemma of security, scalability, and speed, and the classical cryptography that protects device identity is exposed to a future quantum adversary under the harvest-now, decrypt-later model. This thesis proposes STRATA, a trust-partitioning architecture that places each security function on the layer whose cost profile can sustain it. High-frequency behavioural validation is handled on a fast permissioned ledger close to the devices, while low-frequency, high-value events such as identity anchoring, audit, and revocation are committed as digests to a public anchoring layer. The architecture comprises a lightweight federated behavioural-trust module built on a trimmed one-dimensional Convolutional Neural Network--Long Short-Term Memory (CNN-LSTM) model of 41{,}762 parameters (0.17~MB), and a quantum-resilient identity and credential module based on entropy-seeded identity derivation and compressed lattice-based key delivery. Evaluated against eight federated blockchain approaches and eight ledger-based data-sharing frameworks, STRATA achieves detection accuracy between 96.84\% and 97.70\% with a false positive rate of 1.90\%, finalisation in 0.11~s, ledger metadata occupying 0.13\% of the learning traffic, a 46.6\% ciphertext reduction under reuse-aware delivery, and revocation confirmed in 1.8~s with success above 95\% across a tenfold increase in device population. Realising the architecture on two ledger substrate pairs that share no consensus, execution, or cost model shows that trust-partitioning is a property of the design rather than of a particular ledger, so the trilemma that binds a single ledger is resolved across two.
 
