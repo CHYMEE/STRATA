@@ -615,16 +615,39 @@ The contracts underwent static and dynamic vulnerability assessment under two co
     Timestamp manipulation & None found & Validators cross-check commit time \\
     External call risks & None found & No untrusted external calls \\
     \midrule
-    Overall assessment & 98\% & Combined tool score \\
+    Audit summary & Six classes assessed & No critical or high-severity finding
+    detected; one minor finding \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-The overall figure expresses the proportion of examined classes returning no critical or high-severity finding, and its composition matters more than its magnitude. A single class was flagged, gas inefficiency, at minor severity, and it was optimised before deployment. That is the least consequential of the six for this architecture, since gas efficiency governs operating cost rather than integrity, and a contract that is expensive but sound commits the same evidence as a cheap one. The classes whose failure would have compromised the anchoring guarantee all returned clean. Reentrancy would have permitted a partially completed commitment to be re-entered and the ledger state corrupted mid-write. Arithmetic overflow would have permitted a crafted value to wrap a counter or an index and write outside its intended bounds. An unsafe external call would have handed control to code outside the audited surface during a commitment. None was found, and the absence of all three is what allows the commitment path to be treated as trustworthy in the sense the architecture requires.
+The assessment is reported categorically rather than as a percentage. The two
+tools did not supply a documented common denominator from which either test
+coverage or a proportion of checks passed could be reproduced, so an aggregate
+percentage would not identify what had actually been measured. Within the six
+classes examined, the tools detected no critical or high-severity finding and
+reported one minor gas-inefficiency finding, which was optimised before
+deployment. Reentrancy would have permitted a partially completed commitment to
+be re-entered and the ledger state corrupted mid-write. Arithmetic overflow
+would have permitted a crafted value to wrap a counter or an index and write
+outside its intended bounds. An unsafe external call would have handed control
+to code outside the assessed surface during a commitment. The assessment
+detected none of these three defect classes in the contracts examined; this is
+evidence about the selected tools, rules, and contract version, not proof that
+the contracts contain no such vulnerability.
 
 Timestamp manipulation deserves separate comment, since timestamps appear in every commitment the architecture publishes and an unverifiable commit time would weaken precisely the audit trail the anchoring stratum exists to provide. The mitigation available here is one that an open network cannot offer. Validators cross-check the commit time against their own clocks, and a validator proposing an implausible timestamp is identified and attributable rather than anonymous, so the misbehaviour carries a consequence beyond rejection of the block. The residual exposure is bounded by the disagreement tolerated among validator clocks, which is a configuration parameter set by the consortium rather than an open-ended risk.
 
-Auditing establishes that the implementation is free of known defect classes. It does not establish that the mechanisms present are sufficient against an adversary who is assumed capable rather than opportunistic, which requires the threat model. The model assumes honest but curious aggregation servers, authenticated channels, and semi-trusted validators, so an adversary is presumed able to observe legitimately and to attempt influence from within rather than merely to intrude from outside. Figure~\ref{fig:sec-threat} sets out the assets exposed under those assumptions, the capabilities attributed to an adversary, and the mechanisms deployed in response.
+Auditing tests the implementation for the defect classes recognised by the
+selected tools; it cannot establish that the implementation is vulnerability
+free. Nor does it establish that the mechanisms present are sufficient against
+an adversary who is assumed capable rather than opportunistic, which requires
+the threat model. The model assumes honest but curious aggregation servers,
+authenticated channels, and semi-trusted validators, so an adversary is presumed
+able to observe legitimately and to attempt influence from within rather than
+merely to intrude from outside. Figure~\ref{fig:sec-threat} sets out the assets
+exposed under those assumptions, the capabilities attributed to an adversary,
+and the mechanisms deployed in response.
 
 
 \begin{figure}[!htbp]
@@ -634,11 +657,19 @@ Auditing establishes that the implementation is free of known defect classes. It
   \label{fig:sec-threat}
 \end{figure}
 
-Most capabilities in the model are answered by a mechanism already in place. Model poisoning is met by model-size verification and dimension consistency checks, which reject an update whose shape departs from the agreed architecture before it can influence aggregation. Contract manipulation is met by role-based access control, which confines each operation to the participants entitled to invoke it. Consensus exploitation is met by multi-validator signature verification, which requires a quorum rather than a single authority. Replay and rollback are met by timestamp-based protection, which is the mechanism the audit examined separately and found sound. Ledger metadata is protected by hashing, and the layered ledger design confines the consequences of a compromise at one layer to that layer.
+Most capabilities in the model are answered by a mechanism already in place. Model poisoning is met by model-size verification and dimension consistency checks, which reject an update whose shape departs from the agreed architecture before it can influence aggregation. Contract manipulation is met by role-based access control, which confines each operation to the participants entitled to invoke it. Consensus exploitation is met by multi-validator signature verification, which requires a quorum rather than a single authority. Replay and rollback are met by timestamp-based protection, for which the assessment detected no timestamp-manipulation finding. Ledger metadata is protected by hashing, and the layered ledger design confines the consequences of a compromise at one layer to that layer.
 
 One capability is not answered by a deployed mechanism, and the architecture states so rather than leaving it to inference. Gradient inference and model inversion target the model updates in transit, and the present design exchanges those updates without additional cryptographic aggregation or noise injection. That choice was made deliberately, since secure aggregation and differential privacy both impose computation or accuracy costs on nodes whose budgets the preceding subsection showed to be tight, and the architecture prioritised deployability. Within the evaluated threat model the exposure is mitigated rather than eliminated: an adversary must first become an authenticated participant, updates are validated on receipt, and provenance is recorded on the ledger, so inference would have to be attempted from a position that is itself attributable. Under stronger adversarial assumptions the theoretical risk remains, and secure aggregation is designated as the mechanism answering it and identified as a priority extension rather than claimed as present.
 
-That is the honest boundary of what this layer demonstrates. The contracts are free of the defect classes that would undermine commitment, the mechanisms deployed answer five of the six capabilities the model attributes to an adversary, and the sixth is named, its exposure bounded by the participation requirements of the consortium, and its remedy specified for future work. What no amount of contract assurance can supply is protection against the consortium itself, since every mechanism examined here is operated by the parties whose conduct an auditor may wish to examine, and it is that residual exposure the anchoring stratum exists to close.
+That is the boundary of what this layer demonstrates. The assessment detected no
+critical or high-severity finding in the six classes examined; the mechanisms
+deployed answer five of the six capabilities the model attributes to an
+adversary, and the sixth is named, its exposure bounded by the participation
+requirements of the consortium, and its remedy specified for future work. What
+no amount of contract assurance can supply is protection against the consortium
+itself, since every mechanism examined here is operated by the parties whose
+conduct an auditor may wish to examine, and it is that residual exposure the
+anchoring stratum exists to close.
 
 \subsection{Optimised Quantum-Resilient Identity and Key Delivery}
 \label{sec:eval-identity}
@@ -951,18 +982,23 @@ The results in Table~\ref{tab:sota-blockchain} highlight the blockchain-level ch
     \cite{hbf}         & Permissioned & n/r & n/r & n/r \\
     \cite{BlockHunter} & Public & n/r & n/r & n/r \\
     \midrule
-    Proposed (STRATA) & Hybrid & 65{,}618 & 98\% & Yes \\
+    Proposed (STRATA) & Hybrid & 65{,}618 & Six classes assessed & Yes \\
     \bottomrule
   \end{tabularx}
   \vspace{2pt}
   \parbox{\linewidth}{\footnotesize n/r: not reported by the cited work.}
 \end{table}
 The proposed architecture consumes 65{,}618 gas for model commitment, which is only slightly higher than the 63{,}007 reported by the single approach that quantifies transaction cost. Nevertheless, that approach is the only one of eight to report any blockchain-level cost at all, none of the eight reports a contract security assessment, and none reports support for constrained nodes. All eight employ a distributed ledger and seven leave its cost unquantified, so the practical viability of those deployments remains undetermined regardless of the detection accuracy reported.
-The proposed architecture reports 65{,}618 gas for commitment, a contract assessment of 98\% across six vulnerability classes, and a device profile of 41{,}762 parameters at 0.17~MB with an inference latency of 3.1~ms, and is accordingly the only entry in the comparison characterised across the artificial-intelligence layer, the blockchain layer, and the device budget simultaneously.
+The proposed architecture reports 65{,}618 gas for commitment, assessment across
+six contract-vulnerability classes with no critical or high-severity finding
+detected, and a device profile of 41{,}762 parameters at 0.17~MB with an
+inference latency of 3.1~ms. It is accordingly the only entry in the comparison
+characterised across the artificial-intelligence layer, the blockchain layer,
+and the device budget simultaneously.
 
 \subsection{Discussion of Comparative Performance}
 \label{sec:sota-discussion}
-Based on the presented comparative analysis, the proposed architecture achieves a detection accuracy of 97.70\% with recall at the same value, a commitment cost of 65{,}618 gas at a finalisation latency of 0.11~s, a contract assessment of 98\%, and a device footprint of 0.17~MB at 3.1~ms per inference. Approaches attaining higher raw accuracy do so with models between fifteen and roughly one hundred times larger. All but one of them exceed the memory available on microcontroller-class industrial nodes, which confines behavioural evaluation to a gateway or a server, and the one that fits at rest, at 0.9~MB, leaves little headroom once activation buffers are allocated.
+Based on the presented comparative analysis, the proposed architecture achieves a detection accuracy of 97.70\% with recall at the same value, a commitment cost of 65{,}618 gas at a finalisation latency of 0.11~s, assessment across six contract-vulnerability classes with no critical or high-severity finding detected, and a device footprint of 0.17~MB at 3.1~ms per inference. Approaches attaining higher raw accuracy do so with models between fifteen and roughly one hundred times larger. All but one of them exceed the memory available on microcontroller-class industrial nodes, which confines behavioural evaluation to a gateway or a server, and the one that fits at rest, at 0.9~MB, leaves little headroom once activation buffers are allocated.
 Jointly optimising the detector and the ledger deployment, and characterising both against the resource constraints of industrial edge hardware, is what distinguishes the proposed architecture from approaches optimising either in isolation. The comparison therefore establishes the proposed architecture as a deployable option for industrial environments in which detection quality, ledger cost, contract assurance, and device budget must be satisfied together rather than individually.
 
 
@@ -1082,7 +1118,7 @@ Table~\ref{tab:rq-answers} draws the results of this chapter together against th
     RQ4 & The same partition realised on PureChain NSL and on Fabric with Ethereum, sharing no consensus, execution, or cost model; boundary content limited to digests in both
         & Section~\ref{sec:eval-substrate}
         & Yes, on two substrate pairs; a general characterisation remains open \\
-    RQ5 & Two independent withdrawal triggers; confirmation in 1.8~$\pm$~0.2~s; success of 95.2\% or more up to 1{,}000 devices; detection unchanged during isolation (97.40\%, false positive rate 1.90\%); contract assessment of 98\%
+    RQ5 & Two independent withdrawal triggers; confirmation in 1.8~$\pm$~0.2~s; success of 95.2\% or more up to 1{,}000 devices; detection unchanged during isolation (97.40\%, false positive rate 1.90\%); no critical or high-severity contract finding detected across six assessed classes
         & Sections~\ref{sec:eval-security}, \ref{sec:eval-isolation}, \ref{sec:sota-robustness}
         & Yes, within the evaluated threat model; inference attacks on model updates not mitigated \\
     \bottomrule
@@ -1110,7 +1146,7 @@ The security, scalability, and speed trilemma presented at the outset of this th
     \midrule
     Security
       & Public anchoring stratum, with contract assessment on the permissioned layer
-      & No critical or high-severity finding across six vulnerability classes at an overall assessment of 98\%; integrity preserved beyond the fault bound, with unvalidated updates unable to reach the immutable layer
+      & No critical or high-severity contract finding detected across six assessed vulnerability classes; integrity preserved beyond the fault bound, with unvalidated updates unable to reach the immutable layer
       & Anchoring fee per epoch and per withdrawal \\
     Speed
       & Consensus and coordination stratum
