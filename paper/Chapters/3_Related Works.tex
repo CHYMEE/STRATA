@@ -385,25 +385,24 @@ or a peer's reliability, updated from observed behaviour and used to gate access
 or trigger revocation~\cite{anwer2025tead, awan2025stacktrust}. Reputation and
 trust-management schemes formalise how such scores accrue, decay, and drive
 revocation across a network of interacting
-nodes~\cite{bampatsikos2025trustscore, wang2025continuous}. The limitation that
-unites the entire subsection is now visible: learning-based detection can be
-made accurate, temporally aware, privacy-preserving, and even calibrated, but the
-trust verdict it produces is computed and stored wherever the model runs, so it
-remains exactly as mutable as its host. A verdict that can be altered after the
-fact cannot anchor an accountable security decision, which is the requirement
-that ledger-based provenance, examined in Section~\ref{subsec:soa-ledger}, exists
-to meet.
+nodes~\cite{bampatsikos2025trustscore, wang2025continuous}. Across the reviewed
+examples, a recurring limitation is that detection systems not coupled to an
+external tamper-evident record compute and store their trust verdict on the model
+host. In those deployments, the verdict remains as mutable as that host. A
+verdict that can be altered after the fact cannot anchor an accountable security
+decision, which is the requirement that ledger-based provenance, examined in
+Section~\ref{subsec:soa-ledger}, exists to meet.
 
 \subsection{Blockchain and Consensus for IIoT Provenance}
 \label{subsec:soa-ledger}
 
-The limitation that closed the previous subsection, a trust verdict as mutable as
-the host that computes it, is precisely what distributed-ledger provenance
-exists to remove. The reviewed corpus applies blockchain to industrial systems
-less as a currency than as an integrity layer, committing security-relevant
-events to a record that no single participant can silently revise. The concrete
-systems divide by the trust model of the ledger they build on and by the
-consensus that keeps that ledger consistent.
+The recurring host-mutability limitation identified in the previous subsection
+is what distributed-ledger provenance is intended to address. The reviewed
+corpus applies blockchain to industrial systems less as a currency than as an
+integrity layer, committing security-relevant events to a record that no single
+participant can silently revise. The concrete systems divide by the trust model
+of the ledger they build on and by the consensus that keeps that ledger
+consistent.
 
 Permissioned ledgers dominate the industrial setting, because a vetted
 consortium supplies the accountable membership and the throughput that
@@ -485,14 +484,16 @@ carry larger keys and signatures than the schemes they replace, which collides
 directly with the memory and energy budgets of the constrained devices that the
 fast layer is meant to serve~\cite{hanna2025comprehensive, cruz2025measuring}.
 
-Across the three subsections, a consistent shape emerges. Learning-based
-detection supplies an accurate but mutable trust verdict; ledger provenance makes
-that verdict immutable but forces a choice between speed and public
-verifiability; hybrid and tiered ledgers dissolve that choice but inherit a
-bridge to secure and a quantum horizon to survive. No single reviewed system
-carries all three concerns at once under the resource budget of constrained
-industrial operation. Section~\ref{sec:review-gap} consolidates the specific gaps
-this leaves and the questions the remainder of the work addresses.
+Across the three subsections, a consistent shape emerges. In many of the reviewed
+deployments, learning-based detection supplies an accurate verdict that remains
+mutable on its host; ledger provenance can make the recorded verdict
+tamper-evident but forces a choice between speed and public verifiability; hybrid
+and tiered ledgers dissolve that choice but inherit a bridge to secure and a
+quantum horizon to survive. No single reviewed system carries all three concerns
+at once under the resource budget of constrained industrial operation.
+Section~\ref{sec:review-gap}
+consolidates the specific gaps this leaves and the questions the remainder of
+the work addresses.
 
 \begin{table}[!htbp]
 \centering
@@ -540,22 +541,23 @@ time. The state of the art advances each of these properties in isolation and,
 read across its three strands, exposes a coherent set of four gaps that no
 reviewed system closes together.
 
-\textbf{Gap G1: the mutable trust verdict.} Learning-based detection has become
-accurate, temporally aware, privacy-preserving through federation, and in the
-best work calibrated and explainable. Yet the verdict it produces is computed and
-stored wherever the model runs, and is therefore alterable by whoever controls
-that host. Accuracy without immutability cannot underwrite an accountable
-security decision, and the reviewed detectors do not, on their own, make their
-output tamper-evident.
+\textbf{Gap G1: the mutable trust verdict.} The reviewed learning-based
+approaches show that detection can be accurate, temporally aware,
+privacy-preserving through federation, and, in some studies, calibrated and
+explainable. However, where a detector is not coupled to an external
+tamper-evident record, its verdict remains stored on the model host and is
+alterable by whoever controls that host. Accuracy without immutability cannot
+underwrite an accountable security decision, and the reviewed detectors do not,
+on their own, make their output tamper-evident.
 
 \textbf{Gap G2: the placement dilemma.} Ledger provenance supplies the
-immutability that detection lacks, but the reviewed systems force a choice
-between two incompatible virtues. A permissioned ledger fast enough for
-high-frequency behavioural commitment is not public enough to be externally
-verifiable, while a public ledger open enough for external verification is not
-fast enough for operational commitment. No single-ledger design surveyed
-reconciles operational speed with independent verifiability within a constrained
-budget.
+tamper-evidence absent from the detector-only deployments reviewed here, but the
+reviewed ledger systems force a choice between two incompatible virtues. A
+permissioned ledger fast enough for high-frequency behavioural commitment is not
+public enough to be externally verifiable, while a public ledger open enough for
+external verification is not fast enough for operational commitment. No
+single-ledger design surveyed reconciles operational speed with independent
+verifiability within a constrained budget.
 
 \textbf{Gap G3: durability and its cost.} Hybrid and tiered ledgers dissolve the
 placement dilemma by composing a fast permissioned layer with a public anchor
