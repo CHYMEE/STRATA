@@ -73,13 +73,33 @@ Two planes span the strata rather than residing in any one. The identity and rev
 
 A partition is sound only if confining an operation to the permissioned side preserves its public verifiability. The following establishes that partitioning meets this condition.
 
-\begin{theorem}[Verifiability preservation]
+\begin{theorem}[Integrity-verifiability preservation]
 \label{thm:verifiability}
-Let a security-relevant event $e$ be finalised within the permissioned strata, and let its digest $H(e)$ be anchored on the public stratum under an immutable ledger, where $H$ is collision-resistant. Then any party with access to the public stratum alone can verify the integrity of $e$, and the partition introduces no loss of verifiability relative to committing $e$ in full on the public stratum.
+Let a security-relevant record $e$ be finalised within the permissioned strata,
+let $H(\mathrm{canonical}(e))$ be included as a leaf in the Merkle tree for
+epoch $k$, and let the resulting root $R_k$ be committed to an immutable public
+stratum, where $H$ is collision-resistant. A verifier given a claimed record
+$e'$, its Merkle authentication path $\Pi_e$ (including sibling order), and read
+access to the public commitment can verify whether $e'$ is the record represented
+by that anchored leaf and is therefore a member of the finalised epoch. Subject
+to the availability of $e'$ and $\Pi_e$, the partition preserves integrity
+verifiability relative to committing $e$ in full on the public stratum.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
-Verifying $e$ means confirming that the copy presented to a verifier is the one finalised. A verifier recomputes $H(e')$ from a presented $e'$ and compares it to the anchored $H(e)$; equality holds if and only if $e'=e$, except with negligible probability under collision resistance. Immutability of the public stratum guarantees the anchored value cannot be altered after commitment, so the reference is trustworthy. Integrity of $e$ is therefore verifiable from the public stratum without access to the permissioned strata. Committing $e$ publicly in full would expose the same guarantee through $e$ itself; the partition transfers only the proof $H(e)$ to the public stratum and confines the payload, so no verifiability is lost.
+The verifier computes $H(\mathrm{canonical}(e'))$ and combines it with the
+ordered sibling hashes in $\Pi_e$ to reconstruct a root $\hat{R}_k$. If
+$e'=e$ and the supplied path is the path retained for $e$, then
+$\hat{R}_k=R_k$. For that claimed leaf position and authentication path, changing
+$e'$ while obtaining the same root would require a collision at a leaf or an
+internal tree node, except with negligible probability under collision
+resistance. A different valid record and path would prove membership of that
+different record, not of $e$. Immutability of the public stratum prevents
+substitution of $R_k$ after commitment. Equality of
+$\hat{R}_k$ and the publicly anchored $R_k$ therefore verifies the integrity and
+epoch membership of the claimed record. The public commitment does not itself
+supply $e'$ or $\Pi_e$; the preserved property is integrity verification once
+those inputs are available, not public availability of the underlying evidence.
 \end{proof}
 
 Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argument. Because the proof of integrity, not the payload, is what public accountability requires, the high-value proof is anchored publicly while the high-frequency payload stays permissioned, which is the separation Definition~\ref{def:trust-partition} prescribes. Table~\ref{tab:strata-map} sets each element of the framework against the review gap it closes and the RQ it answers, so the architecture reads as a principled response to the gaps established earlier rather than a set of untested mechanisms.
@@ -593,7 +613,14 @@ Algorithm~\ref{alg:strata-anchor} states the production procedure. It accepts th
 \end{algorithmic}
 \end{algorithm}
 
-The audit procedure that consumes those commitments is stated separately in Algorithm~\ref{alg:strata-verify}, because the party that runs it is not the party that produced the record. An auditor requires the record under examination, the Merkle path retained beside it, and read access to the public substrate. No credential, no consortium membership, and no cooperation from the operator beyond release of the record is needed, which is the property that distinguishes anchoring from internal logging.
+The audit procedure that consumes those commitments is stated separately in
+Algorithm~\ref{alg:strata-verify}, because the party that runs it is not the
+party that produced the record. An auditor requires the record under examination,
+the Merkle path retained beside it, and read access to the public substrate. Once
+the record and path have been supplied, no credential, consortium membership, or
+further cooperation from the operator is required. The public anchor alone
+contains only the commitment, so the procedure guarantees integrity verification
+rather than availability of the underlying record or authentication path.
 
 \begin{algorithm}[t]
 \caption{Independent verification of an anchored record}
