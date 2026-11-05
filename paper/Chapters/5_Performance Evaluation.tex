@@ -84,12 +84,21 @@ the confidence scores that drive the trust update.
 \subsection{Cross-Entropy Loss ($\mathcal{L}$)}
 \label{sec:metric-loss}
 
-Convergence and prediction reliability during training are assessed through sparse categorical cross-entropy, expressed by Equation~\eqref{eq:m-loss}.
+Training convergence and predictive fit are assessed through multiclass sparse
+categorical cross-entropy, expressed by Equation~\eqref{eq:m-loss}.
 \begin{equation}
 \label{eq:m-loss}
-\mathcal{L} \;=\; -\frac{1}{N} \sum_{i=1}^{N} y_i \log \hat{y}_i ,
+\mathcal{L} \;=\; -\frac{1}{N} \sum_{i=1}^{N}
+\log \hat{y}_{i,c_i} ,
 \end{equation}
-where $N$ is the number of samples, $y_i$ the true label of sample $i$, and $\hat{y}_i$ the predicted probability assigned to that label. Falling loss across federated communication rounds indicates that aggregation is improving the global model rather than averaging away the contributions of individual clients, which is the failure mode federated training on non-identically distributed data is prone to.
+where $N$ is the number of samples, $c_i\in\{1,\ldots,C\}$ is the true class
+index of sample $i$, and $\hat{y}_{i,c_i}$ is the predicted probability assigned
+to that true class among the $C$ classes. The integer class index is used
+directly, rather than represented as a one-hot label, which is the sparse form
+of categorical cross-entropy. Falling loss across federated communication rounds
+indicates that aggregation is improving the global model rather than averaging
+away the contributions of individual clients, which is the failure mode
+federated training on non-identically distributed data is prone to.
 
 \subsection{Model Memory Footprint ($M_f$)}
 \label{sec:metric-memory}
