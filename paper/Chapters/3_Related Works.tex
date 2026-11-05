@@ -100,21 +100,39 @@ without further assessment.
 \midrule
 IC1 & Published in a peer-reviewed journal or conference proceedings & Title and abstract screening \\
 IC2 & Published between 2020 and 2025 & Identification \\
-IC3 & Directly concerned with hybrid blockchain technology for secure, resource-aware data sharing & Title and abstract screening \\
+IC3 & Title or abstract identifies hybrid blockchain as a substantive mechanism for secure, resource-aware data sharing & Title and abstract screening \\
 IC4 & Written in English & Identification \\
 \midrule
-EC1 & Lacks conceptual depth & Full-text assessment \\
-EC2 & Reports neither empirical nor analytical validation & Full-text assessment \\
+EC1 & Provides no concrete architecture, protocol, algorithm, or analytical model beyond a high-level concept & Full-text assessment \\
+EC2 & Supports its claims with neither empirical nor analytical evidence & Full-text assessment \\
 EC3 & Addresses blockchain applications outside the defined scope & Full-text assessment \\
 \midrule
 QC1 & Clarity of research objectives & Full-text assessment \\
-QC2 & Reproducibility of the proposed method or system design & Full-text assessment \\
+QC2 & Sufficient design and evaluation detail for independent reconstruction & Full-text assessment \\
 QC3 & Traceability of results to experimental data or formal analysis & Full-text assessment \\
 QC4 & Relevance to hybrid blockchain and resource-aware data sharing & Full-text assessment \\
 QC5 & Acknowledgement of study-level limitations & Full-text assessment \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+The four potentially overlapping criteria were applied at distinct decision
+points. IC3 was a topical-scope check based only on the title and abstract. At
+full-text assessment, conceptual depth under EC1 required a concrete
+architecture, protocol, algorithm, or analytical model with identifiable
+components and relationships; a paper that only advocated a technology or
+listed anticipated benefits was excluded. Validation under EC2 required at
+least one empirical evaluation, such as an experiment, simulation, benchmark,
+prototype, or case study, or an analytical evaluation, such as a formal model,
+proof, complexity analysis, or quantitative security or performance analysis.
+The evidence had to assess at least one claim about the proposed contribution.
+QC2 imposed the stricter reporting requirement that the system components,
+their interactions or data flows, the principal protocol or algorithm steps,
+and the essential configuration and evaluation conditions were reported in
+sufficient detail for an independent researcher to reconstruct the design and
+assessment. Public source code was not required. Thus, a study could satisfy
+EC1 by presenting a concrete design yet fail QC2 if that design was
+insufficiently specified for independent reconstruction.
 
 \subsection{Article Selection Results}
 \label{subsec:review-results}
