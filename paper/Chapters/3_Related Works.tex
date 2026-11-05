@@ -79,7 +79,7 @@ reproduced rather than merely described.
 Eligibility was decided against criteria fixed before screening began, so that
 inclusion reflected the protocol rather than the reviewer's expectation. A study
 was retained only if it satisfied every inclusion criterion and no exclusion
-criterion, and survived the quality assessment described in
+criterion, and passed the mandatory quality gates described in
 Section~\ref{subsec:review-quality}. Table~\ref{tab:review-criteria} states the
 criteria in full; non-original items such as editorials and letters were removed
 without further assessment.
@@ -158,14 +158,18 @@ summarises this distribution.
 \subsection{Quality Assessment and Bias Evaluation}
 \label{subsec:review-quality}
 
-Each study that passed full-text eligibility was assessed against the five
-quality criteria QC1 to QC5 of Table~\ref{tab:review-criteria}: clarity of
-research objectives; reproducibility of the proposed method or system design;
-traceability of results, meaning whether performance claims such as throughput,
-latency, or energy efficiency were supported by experimental data or formal
-analysis; relevance to hybrid blockchain and resource-aware data sharing; and
-acknowledgement of study-level limitations. Failure on objectives,
-reproducibility, or relevance was grounds for exclusion at full-text review.
+During full-text assessment, each study was scored against QC1 to QC5 of
+Table~\ref{tab:review-criteria} using a binary scale: 1 when the criterion was
+satisfied and 0 when it was not. QC1 (clear research objectives), QC2
+(reproducible method or system design), and QC4 (relevance to hybrid blockchain
+and resource-aware data sharing) were mandatory quality gates. A study passed
+the quality assessment only when QC1~=~QC2~=~QC4~=~1; a score of 0 on any of
+these three criteria caused exclusion. QC3 recorded whether reported results,
+including throughput, latency, or energy-efficiency claims, were traceable to
+experimental data or formal analysis, while QC5 recorded whether study-level
+limitations were acknowledged. QC3 and QC5 characterised evidential and
+reporting quality but were not independent exclusion gates. The five binary
+scores were not weighted or summed, and no aggregate-score threshold was used.
 
 Five sources of bias were addressed directly rather than left implicit.
 Publication bias was mitigated by spanning five databases across multiple
