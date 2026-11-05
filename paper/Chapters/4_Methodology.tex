@@ -910,7 +910,7 @@ Table~\ref{tab:substrate-mapping} sets the two instantiations against each other
       & Organisation-scoped identities issued by a membership service \\
     Public anchoring
       & PureChain public anchor receiving epoch roots
-      & Ethereum receiving epoch roots by contract call, under a confirmation depth of three \\
+      & Ethereum-compatible contract receiving epoch roots in an isolated Geth test harness, under a three-block confirmation rule \\
     Credential registration
       & Anchor contract holding hashed identifier and key digest
       & Anchor contract holding hashed identifier and key digest \\
@@ -991,8 +991,8 @@ Reproduction of either instantiation requires the substrate configuration, the c
     \textbf{Item} & \textbf{Configuration} \\
     \midrule
     Permissioned substrate & Hyperledger Fabric v2.5, Raft ordering \\
-    Public substrate & Ethereum Geth v1.13, proof-of-work, 14~s mean block time, confirmation depth of three \\
-    Topology & Five Fabric peers, one ordering service, one Geth node \\
+    Public-anchor test harness & Isolated single-node Geth v1.13 execution environment; source-reported legacy-PoW timing model with a 14~s mean interval and a three-block confirmation rule; not Ethereum Mainnet \\
+    Topology & Five Fabric peers, one ordering service, one isolated Geth execution node \\
     Block parameters & Two-second block interval, batch size of ten transactions \\
     Smart-contract toolchain & Remix IDE, Solidity compiler 0.8.17 \\
     Network emulation & Mininet v2.3.0, links at 10~Mbps and 1~Gbps \\
@@ -1009,6 +1009,19 @@ Reproduction of either instantiation requires the substrate configuration, the c
     \bottomrule
   \end{tabularx}
 \end{table}
+
+The Ethereum-side configuration in Table~\ref{tab:env-instantiation-ii}
+reproduces the setup reported by the source study~\cite{amadi2026symmetric}, but
+its consensus label requires qualification. The experiment used an isolated
+Mininet testbed with one Geth v1.13 execution node, not Ethereum Mainnet. The
+source report labels the setup as proof-of-work and reports a 14~s mean interval,
+but it does not provide a genesis file, mining command, or consensus-client
+configuration from which the native consensus mode can be independently
+verified. Post-Merge Ethereum Mainnet uses proof-of-stake, for which Geth operates
+as an execution client alongside a consensus client~\cite{geth-node-architecture}.
+Accordingly, the 14~s interval and three-block depth are treated here only as the
+legacy-PoW timing and confirmation model applied in the relay experiment, not as
+properties of Geth v1.13 or current Ethereum Mainnet.
 
 The PureChain deployment is operated as a shared network rather than provisioned per experiment, so its validator membership and block cadence are fixed by the network operator and are not varied here. Identity and post-quantum operations were exercised on a separate bench rather than inside either ledger testbed, and Table~\ref{tab:env-identity} records that configuration. Keeping it distinct matters for interpretation: the encapsulation and compression measurements characterise the primitive on a workstation, not the cost of running it on the constrained devices listed above.
 
@@ -1036,7 +1049,7 @@ The PureChain deployment is operated as a shared network rather than provisioned
     \bottomrule
   \end{tabularx}
 \end{table}
-The two environments differ in three respects that bear directly on how the following chapter should be read. Training is federated across five clients in the first instantiation and centralised in the second, so behavioural results are not directly comparable between them and are reported separately. The datasets likewise differ, the first instantiation evaluating on a public benchmark together with an internally generated IIoT set of 57 features and the second on NSL-KDD with 41 features across five classes. Anchoring economics differ by construction, the first instantiation writing to a zero-fee anchor and the second to a fee-bearing public chain with a fourteen-second block time and a confirmation depth of three.
+The two environments differ in three respects that bear directly on how the following chapter should be read. Training is federated across five clients in the first instantiation and centralised in the second, so behavioural results are not directly comparable between them and are reported separately. The datasets likewise differ, the first instantiation evaluating on a public benchmark together with an internally generated IIoT set of 57 features and the second on NSL-KDD with 41 features across five classes. Anchoring economics differ by construction, the first instantiation writing to a zero-fee anchor and the second applying a fee model together with the source study's 14~s public-side timing interval and three-block confirmation rule.
 
 What does carry across is the partition itself. Behavioural scoring is committed per observation window on a fast permissioned layer in both, finalisation is decided by a bounded identified validator set in both, and the material crossing to the public side is a digest in both. The measurements that follow are therefore reported per instantiation, and the cross-substrate claim rests on the structural correspondence.
 

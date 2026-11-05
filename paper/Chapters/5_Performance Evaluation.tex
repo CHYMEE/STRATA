@@ -795,14 +795,14 @@ The generality of a trust-partitioning design is a function of whether the roles
       & Organisation-scoped identities from a membership service \\
     Public anchoring
       & Companion anchor receiving epoch roots, fee-free
-      & General-purpose public chain, contract call, confirmation depth of three \\
+      & Ethereum-compatible contract in an isolated Geth test harness, three-block confirmation rule \\
     Boundary content
       & Digests and hashed identifiers only
       & Digests and hashed identifiers only \\
     \bottomrule
   \end{tabularx}
 \end{table}
-The data presented in Table~\ref{tab:sub-mapping} indicate that each architectural role is discharged in both realisations by components that share no consensus mechanism, no execution model, and no cost model. Four of the five rows differ entirely, spanning authority-weighted consensus against an ordering service, adaptive cadence against endorsement policy, weighted consortium validators against organisation-scoped membership identities, and fee-free anchoring against a priced public chain with a confirmation depth of three. The fifth row is identical in both, carrying digests and hashed identifiers and nothing further, which is the invariant by which the partition is defined.
+The data presented in Table~\ref{tab:sub-mapping} indicate that each architectural role is discharged in both realisations by components that share no consensus mechanism, no execution model, and no cost model. Four of the five rows differ entirely, spanning authority-weighted consensus against an ordering service, adaptive cadence against endorsement policy, weighted consortium validators against organisation-scoped membership identities, and fee-free anchoring against an Ethereum-compatible, fee-modelled anchor harness with a three-block confirmation rule. The fifth row is identical in both, carrying digests and hashed identifiers and nothing further, which is the invariant by which the partition is defined.
 
 The values in Table~\ref{tab:sub-properties} summarise the properties measured independently on each realisation.
 \begin{table}[!htbp]
@@ -819,7 +819,7 @@ The values in Table~\ref{tab:sub-properties} summarise the properties measured i
     \toprule
     \textbf{Property} & \textbf{Realisation I} & \textbf{Realisation II} \\
     \midrule
-    Commitment finality & 0.11~s, final on commit & Final on commit, confirmation depth on the public side only \\
+    Commitment finality & 0.11~s, final on commit & Fabric final on commit; three-block rule in the public-anchor test harness \\
     Detection accuracy & 97.70\% and 96.84\% & 97.40\% \\
     Anchoring cost model & Fee-free throughout & Priced per commitment and per withdrawal \\
     Throughput under load & Sustained across the evaluated workload & 94 tx/s on Fabric with anchoring active, against 80 tx/s Fabric-only (relay experiment); 840 to 940 tx/s under the scaling workload \\
@@ -828,10 +828,10 @@ The values in Table~\ref{tab:sub-properties} summarise the properties measured i
     \bottomrule
   \end{tabularx}
 \end{table}
-The results in Table~\ref{tab:sub-properties} affirm that the properties claimed for the partition hold on both realisations. Commitment is final on commit in each, with confirmation depth arising only where the public substrate requires it. Detection accuracy spans 96.84\% to 97.70\%, a range of 0.86 percentage points across three datasets and two training regimes. Withdrawal reaches ledger confirmation in 1.8~s with a spread of 0.2~s, and the boundary carries digests alone in both cases.
+The results in Table~\ref{tab:sub-properties} affirm that the properties claimed for the partition hold on both realisations. Permissioned commitment is final on commit in each, while the second realisation applies the source study's three-block rule only to the public-anchor test harness. Detection accuracy spans 96.84\% to 97.70\%, a range of 0.86 percentage points across three datasets and two training regimes. Withdrawal reaches ledger confirmation in 1.8~s with a spread of 0.2~s, and the boundary carries digests alone in both cases.
 
-Two results follow from the assignment of roles. Public-chain expenditure on the second realisation splits as the cost relation of Equation~\eqref{eq:anchor-cost} predicts, at 4.20~USD per epoch commitment against 3.50~USD per published withdrawal, assuming a gas price of 20~gwei and an ether price of 3{,}500~USD at May 2025 rates~\cite{amadi2026symmetric}. In the relay experiment, adding the anchoring layer raised Fabric throughput from 80 to 94 transactions per second, an improvement of 17.5\%, since anchoring discharges retention away from the fast layer; the 840 to 940 transactions per second of Table~\ref{tab:sota-robustness} were measured separately under the scaling workload.
-The partition is therefore specifiable independently of consensus mechanism, holds under a change from fee-free to priced anchoring, is indifferent to federated or centralised training, and is satisfiable on a production enterprise stack as readily as on a purpose-built lightweight ledger. 
+Two results follow from the assignment of roles. Modelled public-anchor expenditure on the second realisation splits as the cost relation of Equation~\eqref{eq:anchor-cost} predicts, at 4.20~USD per epoch commitment against 3.50~USD per published withdrawal, assuming a gas price of 20~gwei and an ether price of 3{,}500~USD at May 2025 rates~\cite{amadi2026symmetric}. In the relay experiment, adding the anchoring layer raised Fabric throughput from 80 to 94 transactions per second, an improvement of 17.5\%, since anchoring discharges retention away from the fast layer; the 840 to 940 transactions per second of Table~\ref{tab:sota-robustness} were measured separately under the scaling workload.
+The partition is therefore specifiable independently of consensus mechanism, supports both fee-free and fee-modelled anchoring, is indifferent to federated or centralised training, and is realisable on an enterprise permissioned stack paired with an Ethereum-compatible anchor harness as well as on a purpose-built lightweight ledger.
 
 \section{Performance Evaluation with State-of-the-Art Approaches}
 \label{sec:eval-sota}
