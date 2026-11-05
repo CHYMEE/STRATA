@@ -189,12 +189,27 @@ where $p_i$ is the observed probability of outcome $i$ across the sampled seeds.
 \subsection{Trust Score Evolution and Revocation Condition}
 \label{sec:metric-trust}
 
-Device trust is maintained by the law of Plane~A (Section~\ref{sec:plane-a}). The isolation experiments of the second instantiation realise that law in its additive form, in which the score is credited for normal behaviour and penalised for anomalous behaviour at each cycle, as expressed by Equation~\eqref{eq:m-trust}.
+Device trust is maintained by the proposed additive law of Plane~A
+(Equation~\eqref{eq:trust-update}). The isolation experiments of the second
+instantiation implement that same rule, restated here for the evaluation as
+Equation~\eqref{eq:m-trust}.
 \begin{equation}
 \label{eq:m-trust}
-s_i(t) \;=\; \min\!\Big(1,\; \max\!\big(0,\; s_i(t-1) + \Delta_{norm} - \Delta_{anom}\big)\Big) ,
+\begin{aligned}
+a_i(t) &\;=\; \mathbf{1}\!\left[q_i(t)<\delta\right], \\
+s_i(t) &\;=\; \min\!\Big(1,\;\max\!\big(0,\;s_i(t-1)
+{}+\Delta_{\mathrm{norm}}-a_i(t)\Delta_{\mathrm{anom}}\big)\Big) .
+\end{aligned}
 \end{equation}
-where $s_i(t)$ is the trust score of device $i$ at cycle $t$, $\Delta_{norm}$ the increment credited for normal behaviour, and $\Delta_{anom}$ the penalty applied when the behavioural score $q_i(t)$ falls below the flag threshold $\delta$. The additive form is the linear counterpart of the decay law of Equation~\eqref{eq:trust-decay}: it shares the same threshold semantics and the same terminal withdrawal, but a sustained anomaly lowers the score by a constant amount per cycle rather than geometrically, which makes the number of cycles to withdrawal exactly computable. Withdrawal is triggered by either of two independent conditions, expressed by Equation~\eqref{eq:m-revoke}.
+where $s_i(t)$ is the trust score of device $i$ at cycle $t$,
+$a_i(t)$ is the anomaly indicator, $\Delta_{\mathrm{norm}}$ is the increment
+credited for normal behaviour, and
+$\Delta_{\mathrm{anom}}$ is the penalty applied when the behavioural score
+$q_i(t)$ falls below $\delta$. A sustained anomaly lowers the score by the fixed
+amount $\Delta_{\mathrm{anom}}-\Delta_{\mathrm{norm}}$ per cycle, which makes the
+number of cycles to withdrawal exactly computable by
+Proposition~\ref{prop:revocation-delay}. Withdrawal is triggered by either of
+the two conditions in Equation~\eqref{eq:m-revoke}.
 \begin{equation}
 \label{eq:m-revoke}
 \mathrm{Revoke}(\mathrm{id}_i) \iff s_i(t) \leq \tau \;\; \text{or} \;\; S_i(t) > \mu_S ,
@@ -704,10 +719,10 @@ Two constraints bound the scope of these measurements. The compression and laten
 Post-quantum identity is therefore affordable on the hardware the architecture targets. Close to half of the ciphertext is suppressed under reuse-aware delivery, 410 of 768 bytes being sent, because the receiver already holds most of it; the exchange completes in 12.6~ms at lower processor cost than either alternative, and derivation supplies an identifier that is unenumerable when published and bound to behaviour when evaluated.
 
 
-\subsection{Responsive Trust Decay and Credential Isolation}
+\subsection{Responsive Trust Updating and Credential Isolation}
 \label{sec:eval-isolation}
 
-Detection, commitment, and credential issue are preparatory. What the architecture ultimately does with them is withdraw a device that has begun to misbehave, and that is the operation on which its security claim finally rests. Two properties decide whether withdrawal is dependable. It must be driven by accumulated evidence rather than by a single observation, since a mechanism reacting to one detection would withdraw healthy devices on transient noise and a mechanism ignoring sustained degradation would retain compromised ones. And it must complete quickly enough that the interval during which a device known to be misbehaving still holds an honoured credential is short. The first is a property of the decay law, the second of the path between the flag and the ledger, and both are examined here together with what detection does while isolation is under way.
+Detection, commitment, and credential issue are preparatory. What the architecture ultimately does with them is withdraw a device that has begun to misbehave, and that is the operation on which its security claim finally rests. Two properties decide whether withdrawal is dependable. It must be driven by accumulated evidence rather than by a single observation, since a mechanism reacting to one detection would withdraw healthy devices on transient noise and a mechanism ignoring sustained degradation would retain compromised ones. And it must complete quickly enough that the interval during which a device known to be misbehaving still holds an honoured credential is short. The first is a property of the additive trust-update law, the second of the path between the flag and the ledger, and both are examined here together with what detection does while isolation is under way.
  
 Withdrawal is governed by a trust score that falls on anomalous behaviour and recovers on normal behaviour, with two independent triggers. The score is decremented by the anomaly penalty and credited by the normal increment at each behaviour cycle, and withdrawal follows either when the score falls to the revocation threshold or when consecutive anomalous cycles exceed the streak limit. Figure~\ref{fig:iso-decay} shows the resulting trajectories for a device behaving normally and a device under sustained compromise.
 
@@ -718,7 +733,22 @@ Withdrawal is governed by a trust score that falls on anomalous behaviour and re
   \label{fig:iso-decay}
 \end{figure}
 
-The decline under sustained compromise is linear rather than exponential, which follows directly from the additive form of the law and has a consequence worth drawing out. Each anomalous cycle costs a fixed 0.08 of score, the difference between the anomaly penalty and the normal increment, so a device starting at full trust reaches the threshold of 0.60 at the fifth cycle. The number of cycles to withdrawal is therefore computable in advance from the starting score, the threshold, and the penalty, and an operator may choose the penalty to meet a required response time rather than tuning it by observation. The normal trajectory holds at its ceiling over the same interval, so a device supplying clean evidence accumulates credit rather than drifting downward, and the separation between the two widens by a fixed amount every cycle rather than depending on a single decision point.
+The decline under sustained compromise is linear, as specified by the proposed
+additive rule. Each anomalous cycle costs a fixed 0.08 of score, the difference
+between the anomaly penalty and the normal increment, so a device starting at
+full trust reaches the threshold of 0.60 at the fifth cycle. The number of cycles
+to withdrawal is therefore computable in advance from the starting score,
+threshold, and net penalty, and an operator may choose the penalty to meet a
+required response time rather than tuning it by observation. The normal
+trajectory holds at its ceiling over the same interval, so a device supplying
+clean evidence accumulates credit rather than drifting downward, and the
+separation between the two widens by a fixed amount every cycle rather than
+depending on a single decision point.
+
+For the evaluated configuration, $s_i(0)=1$, $d=0.08$, $\tau=0.60$, and
+$\mu_S=3$. Proposition~\ref{prop:revocation-delay} therefore gives a
+threshold horizon of five cycles and a streak horizon of four cycles, matching
+the two trigger points marked in Fig.~\ref{fig:iso-decay}.
  
 The streak trigger addresses the case the threshold handles poorly, and the figure shows it firing first. A device compromised abruptly and comprehensively would, under the threshold alone, take as many cycles to withdraw as one degrading slowly, since the score falls at the same rate in both cases. Counting consecutive anomalous cycles short-circuits that delay: with a streak limit of three, a device failing every cycle in succession is withdrawn at the fourth cycle, one cycle before its score would have reached the threshold. The saving is a single cycle in this configuration and grows as the starting score rises or the penalty falls, so the two triggers answer different adversaries, gradual degradation and abrupt compromise, and the streak trigger bounds the delay that the threshold alone would leave open.
  
@@ -764,7 +794,7 @@ Withdrawal succeeds for 98.1\% of detected anomalies at a hundred devices, 96.9\
 
 Placement tells a different story and exposes the one configuration that underperforms. Cloud placement achieves 98.7\% and hybrid placement 96.4\%, while edge-only placement falls to 92.5\%, below the level sustained by every permissioned configuration in the first panel. The explanation is consistent with the resource evidence presented earlier: an edge-only arrangement performs both evaluation and the assembly of the withdrawal record on the constrained device, and the same budgets that make behavioural scoring affordable there leave little headroom for the additional signing and relay work a withdrawal requires. Hybrid placement, which keeps evaluation at the edge and moves finalisation off it, recovers most of that margin at a cost of 2.3 percentage points against cloud placement, and it is the arrangement the architecture adopts.
 
-Decay-based withdrawal therefore isolates a misbehaving device dependably and without cost to detection. The decline under sustained compromise is linear and its duration computable in advance, two triggers cover gradual and abrupt compromise respectively, confirmation reaches the ledger in 1.8~s with a spread of 0.2~s, success remains above 95\% across a tenfold increase in device population, and accuracy, false positive rate, and false negative rate are unchanged from those reported for the behavioural stratum operating without isolation under way.
+Additive evidence accumulation therefore isolates a misbehaving device dependably and without cost to detection. The decline under sustained compromise is linear and its duration computable in advance, two triggers cover gradual and abrupt compromise respectively, confirmation reaches the ledger in 1.8~s with a spread of 0.2~s, success remains above 95\% across a tenfold increase in device population, and accuracy, false positive rate, and false negative rate are unchanged from those reported for the behavioural stratum operating without isolation under way.
 
 
 \subsection{Substrate-Independent Realisation of the Partition}

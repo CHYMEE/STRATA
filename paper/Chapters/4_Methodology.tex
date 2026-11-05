@@ -66,7 +66,7 @@ The consensus and coordination stratum finalises those commitments. Permissioned
 
 The public anchoring stratum carries only what external accountability requires. Compact digests of finalised state and revocation proofs cross the trust-partition boundary and are committed to an open layer (Augmented-L1), cross-chain-anchored to a public chain where interoperability demands it. Payloads never cross; only proofs do, which preserves confidentiality while enabling open verification. The anchoring design appears in Section~\ref{sec:strata-anchor}.
 
-Two planes span the strata rather than residing in any one. The identity and revocation plane, detailed in Section~\ref{sec:strata-identity}, binds each device to an entropy-seeded identity and governs revocation by a trust-decay law, so a verdict raised in the trust stratum propagates to a revocation proof anchored in the public stratum. The post-quantum plane protects credentials and anchored records with lattice-based primitives against both classical and quantum adversaries. Figure~\ref{fig:strata-arch} places both planes as vertical elements to indicate this span.
+Two planes span the strata rather than residing in any one. The identity and revocation plane, detailed in Section~\ref{sec:strata-identity}, binds each device to an entropy-seeded identity and governs revocation by an additive trust-update law, so a verdict raised in the trust stratum propagates to a revocation proof anchored in the public stratum. The post-quantum plane protects credentials and anchored records with lattice-based primitives against both classical and quantum adversaries. Figure~\ref{fig:strata-arch} places both planes as vertical elements to indicate this span.
 
 \subsection{Verifiability Under Partitioning}
 \label{subsec:strata-theorem}
@@ -130,7 +130,7 @@ Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argum
       & Digest anchoring and cross-chain commitment of proofs
       & Placement (public) & RQ1 \\
     Plane~A \newline Identity \& Revocation
-      & Entropy-seeded identity and trust-decay revocation across strata
+      & Entropy-seeded identity and additive trust updating across strata
       & Accountability & RQ5 \\
     Plane~B \newline Post-Quantum Substrate
       & Compressed Kyber512 and lattice-based encryption for credentials and anchors
@@ -164,8 +164,9 @@ The strata and planes are specified individually in the sections that follow, be
     $\kappa(e)$ & Trust-role of operation $e$: frequency, value, verifiability scope & Definition~\ref{def:trust-partition} \\
     $q_i$ & Per-window behavioural trust score produced by Stratum~1 & Eq.~\eqref{eq:strata-flag} \\
     $\delta$ & Flag threshold applied to $q_i$ & Eq.~\eqref{eq:strata-flag} \\
-    $s_i(t)$ & Accumulated device trust score maintained by Plane~A & Eq.~\eqref{eq:trust-decay} \\
-    $\beta$ & Retention factor of the trust-decay law & Eq.~\eqref{eq:trust-decay} \\
+    $s_i(t)$ & Accumulated device trust score maintained by Plane~A & Eq.~\eqref{eq:trust-update} \\
+    $a_i(t)$ & Anomaly indicator derived from $q_i(t)$ and $\delta$ & Eq.~\eqref{eq:trust-update} \\
+    $\Delta_{\mathrm{norm}}$, $\Delta_{\mathrm{anom}}$ & Normal-behaviour credit; anomaly penalty & Eq.~\eqref{eq:trust-update} \\
     $\tau$ & Revocation threshold applied to $s_i(t)$ & Section~\ref{sec:plane-a} \\
     $S_i(t)$, $\mu_S$ & Anomaly streak counter; streak limit & Eq.~\eqref{eq:revoke-condition} \\
     $\omega_i$, $\theta$ & Validator authority weight; weighted acceptance threshold & Eq.~\eqref{eq:poa2-accept} \\
@@ -214,7 +215,7 @@ with same-length padding so boundary indices remain well defined. The pooled con
 \label{eq:strata-softmax}
 \hat{y}_j \;=\; \frac{\exp(z_j)}{\sum_{\ell=1}^{C} \exp(z_\ell)}, \qquad \mathbf{z} \;=\; \mathbf{W}_{\text{out}}\,\mathbf{h}_T + \mathbf{b}_{\text{out}}.
 \end{equation}
-The trust score of device $d_i$ is taken as the model's confidence in benign behaviour, $q_i \in [0,1]$, obtained from the benign component of $\hat{\mathbf{y}}$ under optional temperature calibration. This per-window score is the behavioural evidence that Plane~A accumulates into the device trust score $s_i$ of Equation~\eqref{eq:trust-decay}, so that a single anomalous window raises a flag without by itself withdrawing a credential. A device is flagged when its score falls below a predefined trust threshold $\delta$,
+The trust score of device $d_i$ is taken as the model's confidence in benign behaviour, $q_i \in [0,1]$, obtained from the benign component of $\hat{\mathbf{y}}$ under optional temperature calibration. This per-window score is the behavioural evidence that Plane~A accumulates into the device trust score $s_i$ of Equation~\eqref{eq:trust-update}, so that a single anomalous window raises a flag without by itself withdrawing a credential. A device is flagged when its score falls below a predefined trust threshold $\delta$,
 \begin{equation}
 \label{eq:strata-flag}
 \text{flag}(d_i) \;=\; \mathbf{1}\!\left[\, q_i < \delta \,\right],
@@ -681,7 +682,7 @@ Plane~A binds a physical device to an identifier and governs the withdrawal of t
   \end{tabularx}
 \end{table}
 
-\subsection{Plane A: Identity Derivation and Trust Decay}
+\subsection{Plane A: Identity Derivation and Trust Updating}
 \label{sec:plane-a}
 
 An identifier that is assigned administratively can be reassigned administratively, which places the operator inside the trust boundary of every claim made about a device. Deriving the identifier from physical entropy captured at the device removes that discretion. The identifier is fixed at enrolment as the digest of three concatenated components:
@@ -742,59 +743,103 @@ Table~\ref{tab:entropy-sources} lists the sources available on constrained indus
 
 The construction consumes the entropy sample as an opaque bit string, so substituting a hardware source at deployment changes the quality of that sample and nothing else: the derivation, the storage cost of the resulting identifier, and every subsequent lifecycle operation are unaffected. What the present realisation establishes is that those operations behave as specified end to end; what it leaves to a fielded deployment is the entropy quality the chosen source actually delivers.
 
-Withdrawal is driven by accumulated behavioural evidence rather than by a single detection. The trust score of a device is updated once per observation window by blending its previous value with the evidence from the current window:
+Withdrawal is driven by accumulated behavioural evidence rather than by a single
+detection. STRATA uses an additive trust-update rule. Let $a_i(t)$ indicate
+whether the behavioural evidence in window $t$ is anomalous. The operational
+update is
 \begin{equation}
-\label{eq:trust-decay}
-s_i(t+1) \;=\; \beta \, s_i(t) \;+\; (1-\beta) \, q_i(t) ,
+\label{eq:trust-update}
+\begin{aligned}
+a_i(t) &\;=\; \mathbf{1}\!\left[q_i(t) < \delta\right], \\
+s_i(t+1) &\;=\; \min\!\left(1,\;\max\!\left(0,\;
+s_i(t)+\Delta_{\mathrm{norm}}-a_i(t)\Delta_{\mathrm{anom}}\right)\right) .
+\end{aligned}
 \end{equation}
-where $s_i(t) \in [0,1]$ is the trust score of device $i$ at window $t$, $q_i(t) \in [0,1]$ is the behavioural evidence produced for that window by the trust-scoring stratum, and $\beta \in (0,1)$ is the retention factor governing how strongly past behaviour resists present evidence. A high retention factor makes the score slow to fall, which suppresses reaction to transient noise at the cost of delaying response to a genuine compromise; a low factor inverts both properties. Withdrawal follows once the score falls to or below the revocation threshold $\tau$, at which point the credential is terminally invalid. Because the update is a convex combination, the score cannot leave the unit interval, and a device supplying uniformly clean evidence converges upward toward unity rather than accumulating unbounded credit for good behaviour.
+where $s_i(t) \in [0,1]$ is the accumulated trust score, $q_i(t) \in [0,1]$
+is the behavioural evidence, $\delta$ is the flag threshold,
+$\Delta_{\mathrm{norm}}>0$ is the credit for a normal window, and
+$\Delta_{\mathrm{anom}}>\Delta_{\mathrm{norm}}$ is the penalty applied to an
+anomalous window. Normal behaviour therefore raises the score by
+$\Delta_{\mathrm{norm}}$, while anomalous behaviour lowers it by the fixed net
+amount $d=\Delta_{\mathrm{anom}}-\Delta_{\mathrm{norm}}$. Clamping keeps the
+score in $[0,1]$. This additive rule is the proposed STRATA method and the rule
+implemented in the isolation experiments of Chapter~\ref{Chapter_5}; it is not a
+baseline or a separate experiment. Exponential smoothing is a possible
+implementation alternative, but it is not evaluated and no empirical claim in
+this thesis relies on it.
 
 A second, independent trigger bounds the response to abrupt compromise. A streak counter $S_i(t)$ records the number of consecutive windows in which the behavioural score $q_i(t)$ has fallen below the flag threshold $\delta$, and is reset by any window of normal behaviour. Withdrawal therefore follows when either condition is met,
 \begin{equation}
 \label{eq:revoke-condition}
 \mathrm{Revoke}(\mathrm{id}_i) \iff s_i(t) \leq \tau \;\; \text{or} \;\; S_i(t) > \mu_S ,
 \end{equation}
-where $\mu_S$ is the streak limit. The threshold condition catches gradual degradation accumulated over many windows, while the streak condition catches a device that fails every window in succession before its score has had time to fall. The trust law may equally be realised in an additive form, in which each window credits or penalises the score by a fixed amount; that form shares the threshold semantics and the terminal withdrawal of Equation~\eqref{eq:trust-decay} but declines linearly rather than geometrically, and it is the form exercised in the isolation experiments of Chapter~\ref{Chapter_5}.
+where $\mu_S$ is the streak limit. The threshold condition catches gradual
+degradation accumulated over many windows, while the streak condition catches a
+device that fails every window in succession before its score has had time to
+fall.
 
-The delay this introduces between compromise and withdrawal is bounded, and the bound is what an operator needs in order to choose the retention factor.
+The delay between sustained compromise and withdrawal is bounded directly by
+the two parameters exercised in the evaluation: the net anomalous decrement and
+the streak limit.
 
 \begin{proposition}
 \label{prop:revocation-delay}
-Let a device hold score $s_i(0) > \tau$ and thereafter supply evidence at a constant level $q < \tau$. The number of observation windows before withdrawal is
+Let a device hold score $s_i(0)>\tau$ and thereafter produce an anomaly in every
+window. Define $d=\Delta_{\mathrm{anom}}-\Delta_{\mathrm{norm}}>0$. Under
+Equations~\eqref{eq:trust-update} and~\eqref{eq:revoke-condition}, withdrawal
+occurs after at most
 \[
-k \;=\; \left\lceil \frac{\ln\!\big( (\tau - q) / (s_i(0) - q) \big)}{\ln \beta} \right\rceil .
+k_{\mathrm{rev}} \;=\;
+\min\!\left\{
+\left\lceil \frac{s_i(0)-\tau}{d} \right\rceil,\;
+\mu_S+1
+\right\}
 \]
+observation windows.
 \end{proposition}
 
 \begin{proof}
-Writing the update as a deviation from the evidence level, $s_i(t+1) - q = \beta\,(s_i(t) - q)$, so $s_i(k) - q = \beta^{k}\,(s_i(0) - q)$. Withdrawal occurs at the least $k$ satisfying $s_i(k) \leq \tau$, that is $\beta^{k}(s_i(0) - q) \leq \tau - q$. Both sides are positive because $q < \tau < s_i(0)$, and $\ln \beta < 0$, so taking logarithms and dividing reverses the inequality and yields the stated expression on rounding up to a whole window.
+Each anomalous window reduces the unclamped score by $d$, so after $k$ such
+windows the score is $\max(0,s_i(0)-kd)$. The threshold trigger fires at the
+least integer $k$ satisfying $s_i(0)-kd\leq\tau$, namely
+$\left\lceil(s_i(0)-\tau)/d\right\rceil$. Independently, the streak counter
+starts at zero and the condition $S_i>\mu_S$ fires after $\mu_S+1$ consecutive
+anomalous windows. Withdrawal occurs when the earlier trigger fires, which gives
+the stated minimum.
 \end{proof}
 
-Two consequences follow. The first is a design guide: an operator who fixes an acceptable response time can solve the expression for the retention factor rather than tuning it by trial. The second is a limitation. Time to withdrawal grows without bound as the evidence level approaches the threshold from below, so an adversary degrading behaviour just far enough to sit marginally beneath it is withdrawn slowly. That strategy is defeated by detecting the degradation, not by accelerating the decay, since a decay steep enough to catch it would withdraw healthy devices on transient noise. The score is a filter over evidence rather than a detector in its own right, and responsibility for recognising the pattern sits with the behavioural stratum. Figure~\ref{fig:trust-decay} places the scoring loop in the wider credential lifecycle it governs.
+The expression is a direct design guide: an operator chooses $d$ to set the
+threshold-based response horizon and $\mu_S$ to cap the delay under uninterrupted
+anomalous behaviour. The score remains a filter over detector evidence rather
+than a detector in its own right, so responsibility for recognising a degrading
+pattern remains with the behavioural stratum. Figure~\ref{fig:trust-update}
+places the scoring loop in the wider credential lifecycle it governs.
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/Picture20.PNG}
   \caption{Credential mechanism of Plane~A, from entropy-seeded derivation and secure-element binding through the scoring loop to withdrawal. Withdrawal is terminal, and replacement requires re-enrolment under a fresh identifier.}
-  \label{fig:trust-decay}
+  \label{fig:trust-update}
 \end{figure}
 
 Algorithm~\ref{alg:identity-lifecycle} sets out the full credential lifecycle, from enrolment through scoring to withdrawal and the handling of a replacement device.
 
 \begin{algorithm}[t]
-\caption{Credential issuance, decay and withdrawal}
+\caption{Credential issuance, additive trust updating, and withdrawal}
 \label{alg:identity-lifecycle}
 \begin{algorithmic}[1]
-\Require Device $i$ presenting entropy sample $e_i$ and device token $d_i$; retention factor $\beta$; revocation threshold $\tau$; initial score $s_0$
+\Require Device $i$ presenting entropy sample $e_i$ and device token $d_i$
+\Require Trust parameters $\Delta_{\mathrm{norm}}$, $\Delta_{\mathrm{anom}}$, $\delta$, $\tau$, $\mu_S$; initial score $s_0$
 \Ensure Credential $\langle \mathrm{id}_i, \mathrm{pk}_i \rangle$ and its lifecycle state
 \State $\mathrm{id}_i \gets H(e_i \,\|\, t_i \,\|\, d_i)$
 \State generate keypair $(\mathrm{sk}_i, \mathrm{pk}_i)$ inside the secure element; $\mathrm{sk}_i$ never leaves it
 \State register $\langle H(\mathrm{id}_i), H(\mathrm{pk}_i), \mathrm{dom}, t_i \rangle$ at the public anchor
-\State $s_i \gets s_0$; \; state $\gets$ Active
+\State $s_i \gets s_0$; \; $S_i \gets 0$; \; state $\gets$ Active
 \For{each observation window $t$}
   \State $q_i(t) \gets$ behavioural evidence from the trust-scoring stratum
-  \State $s_i \gets \beta \, s_i + (1-\beta)\, q_i(t)$
-  \State update streak counter $S_i$ \Comment{reset on a normal window}
+  \State $a_i(t) \gets \mathbf{1}[q_i(t)<\delta]$
+  \State $s_i \gets \min(1,\max(0,s_i+\Delta_{\mathrm{norm}}-a_i(t)\Delta_{\mathrm{anom}}))$
+  \State $S_i \gets a_i(t)(S_i+1)$ \Comment{reset to zero on a normal window}
   \If{$s_i \leq \tau$ \textbf{or} $S_i > \mu_S$}
     \State state $\gets$ Flagged; assemble evidence bundle $\pi_i$
     \State submit revocation for finalisation at the consensus stratum
