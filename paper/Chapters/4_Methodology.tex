@@ -960,7 +960,8 @@ Reproduction of either instantiation requires the substrate configuration, the c
     \midrule
     Permissioned substrate & PureChain network \\
     Consensus mechanism & Authority-weighted consensus with adaptive block cadence \\
-    Public anchor & PureChain public anchor, zero-fee; two public Ethereum networks used for comparison \\
+    Experimental public anchor & PureChain Augmented-L1 public anchor, zero-fee; used for Instantiation~I commitments \\
+    Supplementary comparison networks & Two public Ethereum networks used only for gas-cost comparison; not part of the Instantiation~I anchoring path; network names not reported by the source study \\
     Smart-contract toolchain & Remix Ethereum IDE, Solidity compiler 0.8.10 \\
     Blockchain-side workload & One smart contract, four transaction types \\
     Network emulation & GNS3 \\
@@ -976,6 +977,15 @@ Reproduction of either instantiation requires the substrate configuration, the c
     \bottomrule
   \end{tabularx}
 \end{table}
+
+Instantiation~I used the PureChain Augmented-L1 network as its experimental
+public anchor. The two public Ethereum networks reported in the source
+study~\cite{amadi2026lightweight} were supplementary comparators used to place
+PureChain's measured gas consumption against other public-network costs; they
+did not receive the model commitments, participate in finalisation, or form part
+of the Instantiation~I anchoring path. The source study does not identify those
+two comparator networks by name, so no network-specific configuration is
+attributed to them here.
 
 \begin{table}[!htbp]
   \centering
