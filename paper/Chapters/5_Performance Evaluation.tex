@@ -72,7 +72,14 @@ The F1-score is the harmonic mean of precision and sensitivity, given by Equatio
 \label{eq:m-f1}
 F_1 \;=\; 2 \times \frac{P_r \times R_c^{+}}{P_r + R_c^{+}} ,
 \end{equation}
-where $P_r$ and $R_c^{+}$ are as defined above. The harmonic form penalises imbalance between the two components, so a model achieving high sensitivity by flagging indiscriminately cannot compensate through volume. In an evaluation where both failure modes carry operational cost, F1 is the more trustworthy single indicator than accuracy.
+where $P_r$ and $R_c^{+}$ are as defined above. The harmonic form penalises
+imbalance between precision and sensitivity, making F1 a useful summary of their
+trade-off. It is not sufficient as a single indicator for credential withdrawal,
+however, because it does not describe score calibration, class prevalence, or
+the asymmetric operational costs of false withdrawal and missed compromise.
+Accordingly, F1 should be interpreted together with specificity, the
+false-positive and false-negative rates, and an assessment of the calibration of
+the confidence scores that drive the trust update.
 
 \subsection{Cross-Entropy Loss ($\mathcal{L}$)}
 \label{sec:metric-loss}
