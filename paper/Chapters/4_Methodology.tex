@@ -82,7 +82,7 @@ Let a security-relevant event $e$ be finalised within the permissioned strata, a
 Verifying $e$ means confirming that the copy presented to a verifier is the one finalised. A verifier recomputes $H(e')$ from a presented $e'$ and compares it to the anchored $H(e)$; equality holds if and only if $e'=e$, except with negligible probability under collision resistance. Immutability of the public stratum guarantees the anchored value cannot be altered after commitment, so the reference is trustworthy. Integrity of $e$ is therefore verifiable from the public stratum without access to the permissioned strata. Committing $e$ publicly in full would expose the same guarantee through $e$ itself; the partition transfers only the proof $H(e)$ to the public stratum and confines the payload, so no verifiability is lost.
 \end{proof}
 
-Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argument. Because the proof of integrity, not the payload, is what public accountability requires, the high-value proof is anchored publicly while the high-frequency payload stays permissioned, which is the separation Definition~\ref{def:trust-partition} prescribes. Table~\ref{tab:strata-map} sets each element of the framework against the review gap it closes and the research question it answers, so the architecture reads as a principled response to the gaps established earlier rather than a set of untested mechanisms.
+Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argument. Because the proof of integrity, not the payload, is what public accountability requires, the high-value proof is anchored publicly while the high-frequency payload stays permissioned, which is the separation Definition~\ref{def:trust-partition} prescribes. Table~\ref{tab:strata-map} sets each element of the framework against the review gap it closes and the RQ it answers, so the architecture reads as a principled response to the gaps established earlier rather than a set of untested mechanisms.
 
 
 \begin{table}[!htbp]
@@ -90,7 +90,7 @@ Theorem~\ref{thm:verifiability} is the formal counterpart of the placement argum
   \footnotesize
   \setlength{\tabcolsep}{5pt}
   \renewcommand{\arraystretch}{1.3}
-  \caption{Mapping of each STRATA stratum and plane to its function, the review gap it closes, and the research question it addresses.}
+  \caption{Mapping of each STRATA stratum and plane to its function, the review gap it closes, and the RQ it addresses.}
   \label{tab:strata-map}
   \begin{tabularx}{\textwidth}{@{}
       >{\raggedright\arraybackslash}p{3.0cm}
@@ -1011,5 +1011,5 @@ The PureChain deployment is operated as a shared network rather than provisioned
 \end{table}
 The two environments differ in three respects that bear directly on how the following chapter should be read. Training is federated across five clients in the first instantiation and centralised in the second, so behavioural results are not directly comparable between them and are reported separately. The datasets likewise differ, the first instantiation evaluating on a public benchmark together with an internally generated IIoT set of 57 features and the second on NSL-KDD with 41 features across five classes. Anchoring economics differ by construction, the first instantiation writing to a zero-fee anchor and the second to a fee-bearing public chain with a fourteen-second block time and a confirmation depth of three.
 
-What does carry across is the partition itself. Behavioural scoring is committed per observation window on a fast permissioned layer in both, finalisation is decided by a bounded identified validator set in both, and the material crossing to the public side is a digest in both. The measurements that follow are therefore reported per instantiation, and the cross-substrate claim rests on the structural correspondence. 
- 
+What does carry across is the partition itself. Behavioural scoring is committed per observation window on a fast permissioned layer in both, finalisation is decided by a bounded identified validator set in both, and the material crossing to the public side is a digest in both. The measurements that follow are therefore reported per instantiation, and the cross-substrate claim rests on the structural correspondence.
+

@@ -6,7 +6,7 @@
 \section{Result Presentation and Analysis}
 \label{sec:eval-presentation}
 
-This section presents the simulation results and experimental findings that establish the performance capability, reliability, and efficiency of the proposed STRATA framework in delivering trustworthy security for constrained industrial deployments through behavioural trust scoring, permissioned finalisation, public anchoring, and quantum-resilient credential management. The analysis provides the justifiable basis for the claim that trust-partitioning delivers security within real device resource budgets, evaluated against the resource limits of industrial edge hardware and against comparable approaches drawn from the literature. Measurements are reported per instantiation and per architectural layer, so that each result can be traced to the stratum whose behaviour it characterises and to the research question it answers. Finally, the section presents the deployment scenarios under which the architecture was exercised, establishing that the reported behaviour holds under varying device populations, network conditions, and placement strategies rather than under a single favourable configuration.
+This section presents the simulation results and experimental findings that establish the performance capability, reliability, and efficiency of the proposed STRATA framework in delivering trustworthy security for constrained industrial deployments through behavioural trust scoring, permissioned finalisation, public anchoring, and quantum-resilient credential management. The analysis provides the justifiable basis for the claim that trust-partitioning delivers security within real device resource budgets, evaluated against the resource limits of industrial edge hardware and against comparable approaches drawn from the literature. Measurements are reported per instantiation and per architectural layer, so that each result can be traced to the stratum whose behaviour it characterises and to the RQ it answers. Finally, the section presents the deployment scenarios under which the architecture was exercised, establishing that the reported behaviour holds under varying device populations, network conditions, and placement strategies rather than under a single favourable configuration.
 
 \section{Performance Evaluation Metrics}
 \label{sec:eval-metrics}
@@ -1004,17 +1004,17 @@ This combined approach ensures that an industrial deployment is capable of detec
 
 By realising this approach on two ledger substrates sharing no consensus mechanism, no execution model, and no cost model, the generality of trust-partitioning is established beyond a single implementation. Security functions are placed by cost profile rather than by uniform application, the resulting design operates within the resource limits of industrial edge hardware, and its organising principle transfers to substrates chosen for their difference.
 
-\subsection{Answers to the Research Questions}
+\subsection{Answers to the RQs}
 \label{sec:eval-rq}
 
-Table~\ref{tab:rq-answers} draws the results of this chapter together against the five research questions posed in Section~\ref{sec:rq}, stating for each the principal evidence, the section in which it is reported, and the extent to which the question is answered. Where an answer holds only within a stated scope, the scope is recorded rather than left implicit.
+Table~\ref{tab:rq-answers} draws the results of this chapter together against the five RQs posed in Section~\ref{sec:rq}, stating for each the principal evidence, the section in which it is reported, and the extent to which the RQ is answered. Where an answer holds only within a stated scope, the scope is recorded rather than left implicit.
 
 \begin{table}[!htbp]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{4pt}
   \renewcommand{\arraystretch}{1.3}
-  \caption{Answers to the research questions, with the principal evidence and its location in this chapter.}
+  \caption{Answers to the RQs, with the principal evidence and its location in this chapter.}
   \label{tab:rq-answers}
   \begin{tabularx}{\textwidth}{@{}
       >{\raggedright\arraybackslash}p{0.9cm}
